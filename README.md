@@ -54,6 +54,27 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+## Deployment (Hostinger)
+
+1. **Clone on the server** (SSH or File Manager):  
+   `git clone https://github.com/manal-elmarfoussi10/glm.git` into your domain’s `public_html` or the folder Hostinger uses for the app.
+
+2. **Point the document root** to the app’s `public` folder (e.g. `public_html/glm/public` or set the domain root to that path in the Hostinger panel).
+
+3. **On the server**, from the project root (parent of `public`):
+   - `composer install --no-dev --optimize-autoloader`
+   - `cp .env.example .env` then edit `.env` (database, `APP_KEY`, `APP_URL`)
+   - `php artisan key:generate`
+   - `php artisan migrate --force`
+   - `npm ci && npm run build`
+   - Ensure `storage` and `bootstrap/cache` are writable:  
+     `chmod -R 775 storage bootstrap/cache`
+
+4. **Optional**: Create a Filament admin user:  
+   `php artisan make:filament-user`
+
+Repo: [https://github.com/manal-elmarfoussi10/glm](https://github.com/manal-elmarfoussi10/glm)
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
