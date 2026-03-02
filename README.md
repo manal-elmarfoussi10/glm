@@ -91,6 +91,18 @@ Laravel lives in a folder next to `public_html` (e.g. `~/glm/`). Only the conten
 1. Copy everything from `glm/public/` into `public_html/`.
 2. Use `glm/public/index.shared.php` as `public_html/index.php` (it loads the app from `../glm`). If your folder name is not `glm`, edit the `$appBasePath` line in that file.
 
+### If the design doesn’t match local (CSS/JS not loading)
+
+The frontend is built with Vite; the built files are in `public/build/` and are committed to git (no npm on the server).
+
+1. **On the server**, ensure the **`build`** folder is in your document root:  
+   `build/manifest.json` and `build/assets/*.css`, `*.js` must be reachable at `https://your-domain.com/build/...`.
+2. In **`.env`** set the asset base URL:  
+   `ASSET_URL=https://glm.marfoussiwebart.com` (or your real domain). No trailing slash.
+3. Clear caches after pull or config change:  
+   `php artisan config:clear && php artisan view:clear`
+4. If you use “everything in public_html” (Option A), the app sets `public_path()` to the document root so `build/` is found; after `git pull` the `build` folder must be at the same level as `index.php`.
+
 Repo: [https://github.com/manal-elmarfoussi10/glm](https://github.com/manal-elmarfoussi10/glm)
 
 ## License

@@ -56,6 +56,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Asset URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used when generating asset URLs (e.g. for Vite build files).
+    | Set ASSET_URL in .env to your full site URL (e.g. https://glm.marfoussiwebart.com)
+    | if CSS/JS fail to load on production (shared hosting, proxy, etc.).
+    |
+    */
+
+    'asset_url' => env('ASSET_URL', env('APP_URL')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
