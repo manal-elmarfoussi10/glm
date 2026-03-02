@@ -4,11 +4,31 @@ on:
   push:
     branches: ["main"]
 
+env:
+  # Hostinger path: /home/USER/domains/DOMAIN/public_html = Laravel root
+  # Build must go in public_html/public/build (web-accessible via /build/)
+  DEPLOY_ROOT: /home/${{ secrets.SSH_USER }}/domains/glm.marfoussiwebart.com/public_html
+  BUILD_TARGET: /home/${{ secrets.SSH_USER }}/domains/glm.marfoussiwebart.com/public_html/public
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy via SSH
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install and build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy via SSH (pull, composer, migrate)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -17,7 +37,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            cd /home/${{ secrets.SSH_USER }}/domains/glm.marfoussiwebart.com/public_html
+            cd ${{ env.DEPLOY_ROOT }}
 
             git pull origin main
 
@@ -25,9 +45,35 @@ jobs:
 
             php artisan migrate --force
             php artisan storage:link || true
+            chmod -R 775 storage bootstrap/cache
+
+      - name: Upload build assets to server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "public/build"
+          target: ${{ env.BUILD_TARGET }}
+
+      - name: Cache and verify
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -e
+            cd ${{ env.DEPLOY_ROOT }}
+
             php artisan optimize:clear
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
 
-            chmod -R 775 storage bootstrap/cache
+            echo "--- Verifying build on server ---"
+            ls -la public/build/ || (echo "ERROR: public/build/ not found" && exit 1)
+            test -f public/build/manifest.json || (echo "ERROR: manifest.json missing" && exit 1)
+            echo "Build OK"
