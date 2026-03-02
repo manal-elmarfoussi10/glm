@@ -75,21 +75,21 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 
 ### Shared hosting (cannot change document root)
 
-If you **cannot** set the document root to `public` (e.g. Hostinger with fixed `public_html`):
+**Option A – Everything directly in `public_html`**
 
-1. **Put the app outside `public_html`**  
-   Move the whole project so it sits **next to** `public_html`, not inside it, e.g.:
-   - `/home/username/glm/` ← full Laravel app (app, bootstrap, config, .env, vendor, **and** the `public` folder)
-   - `/home/username/public_html/` ← document root (unchanged)
+You have the full Laravel app (app/, bootstrap/, config/, vendor/, storage/, .env, etc.) and the contents of `public/` (index.php, .htaccess, build/, …) all inside `public_html` with no subfolders.
 
-2. **Copy the contents of `glm/public/` into `public_html/`**  
-   So `public_html/` contains: `index.php`, `.htaccess`, `build/`, `css/`, `js/`, `fonts/`, `favicon.ico`, `robots.txt`, etc. (everything that is inside `glm/public/`).
+1. Use the entry point that expects the app in the same folder as `index.php`:  
+   Copy `public/index.document_root.php` to your document root as `index.php` (e.g. `public_html/index.php`).
+2. Ensure `.htaccess` is in the same folder (copy from `public/.htaccess` if needed).
+3. Run all `php artisan` commands from that folder (e.g. `cd ~/public_html`).
 
-3. **Use the shared-hosting entry point**  
-   Replace `public_html/index.php` with the contents of `glm/public/index.shared.php` (or copy `index.shared.php` to `public_html/index.php`).  
-   That file tells PHP to load Laravel from `../glm`. If your app folder is not named `glm`, edit the `$appBasePath` line in `index.shared.php` to match (e.g. `'/../myapp'`).
+**Option B – App outside `public_html`**
 
-4. **Leave `.env` and the rest in** `/home/username/glm/`. The site will run from `public_html` but use the app in `glm/`.
+Laravel lives in a folder next to `public_html` (e.g. `~/glm/`). Only the contents of `public/` are in `public_html/`.
+
+1. Copy everything from `glm/public/` into `public_html/`.
+2. Use `glm/public/index.shared.php` as `public_html/index.php` (it loads the app from `../glm`). If your folder name is not `glm`, edit the `$appBasePath` line in that file.
 
 Repo: [https://github.com/manal-elmarfoussi10/glm](https://github.com/manal-elmarfoussi10/glm)
 
