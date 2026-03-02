@@ -23,6 +23,15 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'role',
+        'company_id',
+        'branch_id',
+        'status',
+        'phone',
+        'whatsapp_phone',
+        'cin',
+        'preferences',
+        'last_login_at',
     ];
 
     /**
@@ -45,11 +54,23 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'preferences' => 'array',
+            'last_login_at' => 'datetime',
         ];
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
     }
 }
