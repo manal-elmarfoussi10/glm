@@ -13,12 +13,38 @@ Use this file to track features and the steps to get them working. Check off ite
 
 ---
 
+## Roles & Access Control (Final Structure)
+
+### 🌍 Platform Level (GLM)
+
+| Role | Key capabilities |
+|------|------------------|
+| **super_admin** | Manage companies, subscriptions, system analytics, suspend accounts. Full access. |
+| **support** | View companies, assist users, reset passwords, view logs. No financial deep access. |
+
+### 🏢 Company Level (Rental Agency)
+
+| Role | Key capabilities |
+|------|------------------|
+| **company_admin** | Add managers & accountant, create branches, manage vehicles/clients, reservations, contracts, financial dashboards, pricing rules, export reports. Full control inside company. |
+| **manager** | Manage vehicles (branch), create reservations, add clients, generate contracts, inspections, mark payments. Cannot: manage subscription, add/remove admins, change global settings. |
+| **accountant** | View reservations, mark payments, track cheques, export reports, revenue dashboards. Cannot: create reservations, modify vehicles, delete data. |
+
+### Architecture
+
+- **One company → multiple branches**
+- **Users:** `id`, `company_id`, `branch_id` (nullable for admin), `role`
+- **Roles:** `super_admin`, `support`, `company_admin`, `manager`, `accountant`
+- **MVP:** 3 roles inside company: Admin, Manager, Accountant (no Agent)
+
+---
+
 ## Phase 1 – Foundation
 
 ### Authentication & access
 - [ ] Filament login working (done ✓)
 - [ ] Homepage redirects to `/admin` (done ✓)
-- [ ] Define user roles (e.g. Admin, Editor, Viewer) if needed
+- [ ] Define user roles (see Roles & Access Control above)
 - [ ] Restrict Filament panel by role (policies / middleware)
 - [ ] Optional: “Forgot password” flow
 - [ ] Optional: 2FA for admin
@@ -129,17 +155,73 @@ php artisan view:cache
 
 ---
 
+## Deploy (shared hosting – no Node/npm on server)
+
+Because the server cannot run `npm run build`, you must **build assets locally** and commit them.
+
+### Before each deploy (when CSS/JS change)
+
+```bash
+npm run build
+git add public/build/
+git commit -m "Build assets for production"
+git push
+```
+
+### Server `.env` (required)
+
+```env
+APP_URL=https://glm.marfoussiwebart.com
+ASSET_URL=https://glm.marfoussiwebart.com
+```
+
+### Checklist
+
+- [ ] Run `npm run build` locally before pushing CSS/JS changes
+- [ ] Commit `public/build/` with your code
+- [ ] `APP_URL` and `ASSET_URL` set correctly on server
+- [ ] After deploy: `php artisan optimize:clear` if styles don’t update
+
+---
+
+## Proposed implementation order
+
+Start with:
+
+1. **Phase 1 – Roles & migrations**
+   - [ ] Add `role` column to users (enum: `super_admin`, `support`, `company_admin`, `manager`, `accountant`)
+   - [ ] Add `company_id` and `branch_id` (nullable) to users table
+   - [ ] Create `companies` and `branches` tables
+   - [ ] Create roles enum or config
+   - [ ] Seed super_admin user
+
+2. **Phase 2 – Authorization**
+   - [ ] Implement Filament policies / middleware to restrict panel by role
+   - [ ] Super Admin: sees everything; Support: limited company view
+   - [ ] Company users: scope to `company_id` (and `branch_id` for managers)
+
+3. **Phase 3 – Company & branch CRUD**
+   - [ ] Filament resources: Company, Branch
+   - [ ] Company Admin can create branches and invite users
+
+4. **Phase 4 – Role-specific UI**
+   - [ ] Hide/show Filament resources and actions by role
+   - [ ] Manager: branch-scoped vehicles, reservations, clients
+   - [ ] Accountant: read-only + payments, reports
+
+---
+
 ## Your feature list (fill in from your roadmap)
 
 Add your own features from the “GLM - Product Feature Roadmap” here, then move them into the phases above and use the step-by-step template.
 
 | # | Feature / epic | Phase | Done |
 |---|----------------|-------|------|
-| 1 | _Example: Product catalog_ | 2 | ☐ |
-| 2 | | | ☐ |
-| 3 | | | ☐ |
-| 4 | | | ☐ |
-| 5 | | | ☐ |
+| 1 | Roles & migrations (companies, branches, users) | 1 | ☐ |
+| 2 | Authorization by role (policies, middleware) | 1 | ☐ |
+| 3 | Company & Branch CRUD | 2 | ☐ |
+| 4 | Role-specific Filament UI | 2 | ☐ |
+| 5 | _Add more as you build_ | | ☐ |
 
 ---
 
