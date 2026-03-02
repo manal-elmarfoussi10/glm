@@ -2,6 +2,9 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\CustomLogin;
+use App\Filament\Auth\CustomRegister;
+use App\Filament\Auth\CustomRequestPasswordReset;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -27,10 +30,18 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(CustomLogin::class)
+            ->registration(CustomRegister::class)
+            ->passwordReset(CustomRequestPasswordReset::class)
+            ->brandName('GLM')
+            ->brandLogo(asset('images/light-logo.png'))
+            ->darkModeBrandLogo(asset('images/dark-logo.png'))
+            ->brandLogoHeight('2rem')
+            ->favicon(asset('images/Icon Blue.png'))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue, // Electric Blue #2563EB (see BRAND_GUIDE.md)
             ])
+            ->font('Inter')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
