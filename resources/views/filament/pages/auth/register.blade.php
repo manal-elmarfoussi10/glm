@@ -4,26 +4,27 @@
     $hasLogo = $this->hasLogo();
 @endphp
 
-<div class="fi-simple-page glm-auth-card rounded-2xl bg-white dark:bg-gray-800 shadow-xl border border-gray-200/50 dark:border-gray-700 p-8 sm:p-10">
+<div class="fi-simple-page glm-auth-card rounded-2xl border-0 p-8 sm:p-10 md:p-12">
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
-    <div class="glm-auth-page-content space-y-6">
+    <div class="glm-auth-page-content space-y-8">
         @if ($hasLogo)
-            <div class="flex justify-center lg:hidden mb-6">
+            <div class="flex justify-center lg:hidden">
                 <img src="{{ asset('images/light-logo.png') }}" alt="GLM" class="h-9 dark:hidden" />
                 <img src="{{ asset('images/dark-logo.png') }}" alt="GLM" class="h-9 hidden dark:block" />
             </div>
         @endif
 
         @if (filled($heading) || filled($subheading))
-            <header class="text-center space-y-2">
+            <header class="text-left space-y-3">
+                <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#2563EB]" style="font-family: 'Inter', sans-serif;">Inscription</span>
                 @if (filled($heading))
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight" style="font-family: 'Montserrat', sans-serif;">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight" style="font-family: 'Montserrat', sans-serif;">
                         {{ $heading }}
                     </h1>
                 @endif
                 @if (filled($subheading))
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">
+                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                         {!! $subheading !!}
                     </p>
                 @endif

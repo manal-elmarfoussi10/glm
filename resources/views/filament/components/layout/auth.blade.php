@@ -9,6 +9,10 @@
     }
 @endphp
 
+@push('styles')
+    @vite(['resources/css/app.css', 'resources/css/auth.css'])
+@endpush
+
 <x-filament-panels::layout.base :livewire="$livewire">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&display=swap');

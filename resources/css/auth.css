@@ -1,0 +1,159 @@
+/* GLM Auth – premium form styling (plain CSS for auth layout) */
+
+.glm-auth-card {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(15, 23, 42, 0.05);
+  background: linear-gradient(165deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.dark .glm-auth-card {
+  background: linear-gradient(165deg, rgb(31, 41, 55) 0%, rgb(17, 24, 39) 100%);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
+.glm-auth-card .fi-simple-page-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.glm-auth-card [data-slot="label"],
+.glm-auth-card label.fi-fo-field-wrp-label,
+.glm-auth-card .fi-fo-field-wrp-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  letter-spacing: -0.01em;
+  font-family: 'Inter', sans-serif;
+}
+
+.dark .glm-auth-card [data-slot="label"],
+.dark .glm-auth-card label.fi-fo-field-wrp-label,
+.dark .glm-auth-card .fi-fo-field-wrp-label {
+  color: #d1d5db;
+}
+
+.glm-auth-card input[type="text"],
+.glm-auth-card input[type="email"],
+.glm-auth-card input[type="password"] {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 2px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  color: #111827;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.dark .glm-auth-card input[type="text"],
+.dark .glm-auth-card input[type="email"],
+.dark .glm-auth-card input[type="password"] {
+  border-color: #4b5563;
+  background: rgba(55, 65, 81, 0.5);
+  color: #fff;
+}
+
+.glm-auth-card input[type="text"]:focus,
+.glm-auth-card input[type="email"]:focus,
+.glm-auth-card input[type="password"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.dark .glm-auth-card input[type="text"]:focus,
+.dark .glm-auth-card input[type="email"]:focus,
+.dark .glm-auth-card input[type="password"]:focus {
+  background: rgba(55, 65, 81, 0.8);
+}
+
+.glm-auth-card .fi-fo-field-wrp-hint a,
+.glm-auth-card [data-slot="hint"] a {
+  color: #2563eb;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+
+.glm-auth-card .fi-fo-field-wrp-hint a:hover,
+.glm-auth-card [data-slot="hint"] a:hover {
+  text-decoration: underline;
+  color: #1d4ed8;
+}
+
+.glm-auth-card input[type="checkbox"] {
+  height: 1.25rem;
+  width: 1.25rem;
+  border-radius: 0.25rem;
+  border: 2px solid #d1d5db;
+  color: #2563eb;
+  accent-color: #2563eb;
+}
+
+/* Primary button – full width, prominent (catch all form submit buttons) */
+.glm-auth-card button[type="submit"],
+.glm-auth-card .fi-btn-primary,
+.glm-auth-card .fi-ac button,
+.glm-auth-card .fi-ac-actions button,
+.glm-auth-card [data-slot="submit"] button,
+.glm-auth-card form button[type="submit"],
+.glm-auth-card form .fi-btn,
+.glm-auth-card .fi-simple-page-form button:not([type="button"]) {
+  width: 100%;
+  border-radius: 0.75rem;
+  background: #2563eb;
+  color: #fff;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 1.5rem;
+}
+
+.glm-auth-card button[type="submit"]:hover,
+.glm-auth-card .fi-btn-primary:hover,
+.glm-auth-card .fi-ac button:hover,
+.glm-auth-card .fi-simple-page-form button:not([type="button"]):hover {
+  background: #1d4ed8;
+  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.35);
+}
+
+.glm-auth-card button[type="submit"]:focus,
+.glm-auth-card .fi-btn-primary:focus,
+.glm-auth-card .fi-ac button:focus,
+.glm-auth-card .fi-simple-page-form button:not([type="button"]):focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4);
+}
+
+.glm-auth-card button[type="submit"]:active,
+.glm-auth-card .fi-btn-primary:active,
+.glm-auth-card .fi-ac button:active,
+.glm-auth-card .fi-simple-page-form button:not([type="button"]):active {
+  transform: scale(0.98);
+}
+
+/* Links in subheading */
+.glm-auth-card .glm-auth-page-content header p a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.glm-auth-card .glm-auth-page-content header p a:hover {
+  text-decoration: underline;
+}
+
+/* Right panel gradient */
+.glm-auth-right {
+  background: linear-gradient(180deg, #f2f4f7 0%, #e8ecf1 100%);
+}
+
+.dark .glm-auth-right {
+  background: linear-gradient(180deg, rgb(17, 24, 39) 0%, rgb(3, 7, 18) 100%);
+}

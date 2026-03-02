@@ -1,11 +1,20 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-DgFWm4_y.css",
+    "file": "assets/app-Kt7YtPPS.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
     "names": [
       "app.css"
+    ]
+  },
+  "resources/css/auth.css": {
+    "file": "assets/auth-BzWk43ZC.css",
+    "src": "resources/css/auth.css",
+    "isEntry": true,
+    "name": "auth",
+    "names": [
+      "auth.css"
     ]
   },
   "resources/js/app.js": {
