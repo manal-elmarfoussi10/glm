@@ -1,159 +1,188 @@
-/* GLM Auth – premium form styling (plain CSS for auth layout) */
+/* =========================
+   GLM Auth - Filament overrides
+   ========================= */
 
+/* --- Left panel orbs (custom float animations) --- */
+@keyframes glm-float-1 {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(18px, -22px, 0) scale(1.05); }
+}
+@keyframes glm-float-2 {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(-22px, 18px, 0) scale(1.06); }
+}
+@keyframes glm-float-3 {
+  0%, 100% { transform: translate3d(0,0,0) rotate(0deg); }
+  50% { transform: translate3d(10px, 10px, 0) rotate(6deg); }
+}
+
+.glm-orb { will-change: transform; }
+.glm-orb-1 { animation: glm-float-1 18s ease-in-out infinite; }
+.glm-orb-2 { animation: glm-float-2 22s ease-in-out infinite; }
+.glm-orb-3 { animation: glm-float-3 26s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .glm-orb-1, .glm-orb-2, .glm-orb-3 { animation: none !important; }
+}
+
+/* --- Card / spacing --- */
 .glm-auth-card {
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(15, 23, 42, 0.05);
-  background: linear-gradient(165deg, #ffffff 0%, #f8fafc 100%);
+  background: rgba(17, 24, 39, 0.82) !important; /* dark glass */
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-.dark .glm-auth-card {
-  background: linear-gradient(165deg, rgb(31, 41, 55) 0%, rgb(17, 24, 39) 100%);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-}
-
+.glm-auth-card .glm-auth-form,
 .glm-auth-card .fi-simple-page-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  gap: 2rem;
 }
 
-.glm-auth-card [data-slot="label"],
-.glm-auth-card label.fi-fo-field-wrp-label,
-.glm-auth-card .fi-fo-field-wrp-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
-  letter-spacing: -0.01em;
-  font-family: 'Inter', sans-serif;
+/* Real spacing between Filament form fields (login, register, reset) */
+.glm-auth-card .fi-fo-field-wrp:not(:last-child),
+.glm-auth-card .fi-fo-field-wrp-container:not(:last-child),
+.glm-auth-card .fi-grid-col:not(:last-child) {
+  margin-bottom: 24px !important;
 }
 
-.dark .glm-auth-card [data-slot="label"],
-.dark .glm-auth-card label.fi-fo-field-wrp-label,
-.dark .glm-auth-card .fi-fo-field-wrp-label {
-  color: #d1d5db;
+/* mt-6 between password input and checkbox */
+.glm-auth-card .fi-fo-field-wrp:has(input[type="checkbox"]),
+.glm-auth-card .fi-grid-col:has(input[type="checkbox"]) {
+  margin-top: 24px !important;
 }
 
-.glm-auth-card input[type="text"],
-.glm-auth-card input[type="email"],
-.glm-auth-card input[type="password"] {
-  width: 100%;
-  border-radius: 0.75rem;
-  border: 2px solid #e5e7eb;
-  background: #f9fafb;
-  padding: 0.875rem 1rem;
-  font-size: 1rem;
-  color: #111827;
-  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
-  font-family: 'Inter', sans-serif;
+/* mt-3 between checkbox and "Mot de passe oublié ?" – override checkbox margin-bottom */
+.glm-auth-card .fi-fo-field-wrp:has(input[type="checkbox"]):not(:last-child),
+.glm-auth-card .fi-grid-col:has(input[type="checkbox"]):not(:last-child) {
+  margin-bottom: 12px !important;
 }
 
-.dark .glm-auth-card input[type="text"],
-.dark .glm-auth-card input[type="email"],
-.dark .glm-auth-card input[type="password"] {
-  border-color: #4b5563;
-  background: rgba(55, 65, 81, 0.5);
-  color: #fff;
+/* mt-6 above submit button */
+.glm-auth-card .fi-sc-actions,
+.glm-auth-card .fi-ac {
+  margin-top: 24px !important;
 }
 
-.glm-auth-card input[type="text"]:focus,
-.glm-auth-card input[type="email"]:focus,
-.glm-auth-card input[type="password"]:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+/* Make headings readable */
+.glm-auth-card h1,
+.glm-auth-card .glm-auth-subheading {
+  color: rgba(255,255,255,0.92) !important;
 }
 
-.dark .glm-auth-card input[type="text"]:focus,
-.dark .glm-auth-card input[type="email"]:focus,
-.dark .glm-auth-card input[type="password"]:focus {
-  background: rgba(55, 65, 81, 0.8);
-}
-
-.glm-auth-card .fi-fo-field-wrp-hint a,
-.glm-auth-card [data-slot="hint"] a {
-  color: #2563eb;
+/* Labels */
+.glm-auth-card .fi-fo-field-wrp-label,
+.glm-auth-card label {
+  color: rgba(226,232,240,0.95) !important; /* slate-200 */
   font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s, text-decoration 0.2s;
+  margin-bottom: 16px !important;
 }
 
-.glm-auth-card .fi-fo-field-wrp-hint a:hover,
-.glm-auth-card [data-slot="hint"] a:hover {
-  text-decoration: underline;
-  color: #1d4ed8;
+/* Helper text + hints */
+.glm-auth-card .fi-fo-field-wrp-helper-text,
+.glm-auth-card .fi-fo-field-wrp-hint,
+.glm-auth-card .fi-fo-field-wrp-description {
+  color: rgba(148,163,184,0.9) !important; /* slate-400 */
 }
 
-.glm-auth-card input[type="checkbox"] {
-  height: 1.25rem;
-  width: 1.25rem;
-  border-radius: 0.25rem;
-  border: 2px solid #d1d5db;
-  color: #2563eb;
-  accent-color: #2563eb;
+/* Input wrapper: reset so we don’t get double boxes */
+.glm-auth-card .fi-input-wrp,
+.glm-auth-card .fi-input-wrp * {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  box-shadow: none !important;
 }
 
-/* Primary button – full width, prominent (catch all form submit buttons) */
-.glm-auth-card button[type="submit"],
-.glm-auth-card .fi-btn-primary,
-.glm-auth-card .fi-ac button,
-.glm-auth-card .fi-ac-actions button,
-.glm-auth-card [data-slot="submit"] button,
-.glm-auth-card form button[type="submit"],
-.glm-auth-card form .fi-btn,
-.glm-auth-card .fi-simple-page-form button:not([type="button"]) {
+.glm-auth-card .fi-input-wrp {
+  border-radius: 0 !important;
+}
+
+/* Style ONLY the actual <input> – single clean field */
+.glm-auth-card input[type="email"],
+.glm-auth-card input[type="password"],
+.glm-auth-card input[type="text"] {
+  width: 100% !important;
+  height: 52px !important;
+  padding: 0 16px !important;
+  margin: 0 !important;
+  background: rgba(255,255,255,0.06) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 14px !important;
+  font-size: 1rem !important;
+  box-sizing: border-box !important;
+}
+
+.glm-auth-card input[type="email"]::placeholder,
+.glm-auth-card input[type="password"]::placeholder,
+.glm-auth-card input[type="text"]::placeholder {
+  color: rgba(148,163,184,0.9) !important; /* slate */
+}
+
+.glm-auth-card input[type="email"]:focus,
+.glm-auth-card input[type="password"]:focus,
+.glm-auth-card input[type="text"]:focus {
+  outline: none !important;
+  border-color: rgba(255,255,255,0.12) !important;
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.35) !important;
+}
+
+/* Links */
+.glm-auth-card a {
+  color: rgba(96,165,250,1) !important;
+}
+.glm-auth-card a:hover {
+  color: rgba(147,197,253,1) !important;
+}
+
+/* Primary button (Filament) – ensure label "Se connecter" is visible */
+.glm-auth-card .fi-btn.fi-btn-color-primary,
+.glm-auth-card button[type="submit"] {
   width: 100%;
-  border-radius: 0.75rem;
-  background: #2563eb;
-  color: #fff;
-  padding: 0.875rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
-  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
-  font-family: 'Montserrat', sans-serif;
-  margin-top: 1.5rem;
+  border-radius: 16px !important;
+  background: linear-gradient(90deg, #2563eb, #4f46e5) !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  height: 52px;
+  box-shadow: 0 12px 30px rgba(37,99,235,0.25);
+  transition: filter 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
-.glm-auth-card button[type="submit"]:hover,
-.glm-auth-card .fi-btn-primary:hover,
-.glm-auth-card .fi-ac button:hover,
-.glm-auth-card .fi-simple-page-form button:not([type="button"]):hover {
-  background: #1d4ed8;
-  box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.35);
+.glm-auth-card .fi-btn .fi-btn-label,
+.glm-auth-card .fi-btn span:not(.fi-loading-indicator),
+.glm-auth-card button[type="submit"] .fi-btn-label,
+.glm-auth-card button[type="submit"] span:not([class*="loading"]) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  color: inherit !important;
 }
 
-.glm-auth-card button[type="submit"]:focus,
-.glm-auth-card .fi-btn-primary:focus,
-.glm-auth-card .fi-ac button:focus,
-.glm-auth-card .fi-simple-page-form button:not([type="button"]):focus {
-  outline: none;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4);
+/* Force button label visible when Alpine filamentFormButton fails to load (APP_URL mismatch) */
+.glm-auth-card button[type="submit"] span[x-show] {
+  display: inline !important;
 }
 
-.glm-auth-card button[type="submit"]:active,
-.glm-auth-card .fi-btn-primary:active,
-.glm-auth-card .fi-ac button:active,
-.glm-auth-card .fi-simple-page-form button:not([type="button"]):active {
-  transform: scale(0.98);
+.glm-auth-card .fi-btn.fi-btn-color-primary:hover,
+.glm-auth-card button[type="submit"]:hover {
+  filter: brightness(1.05);
+  transform: translateY(-2px);
 }
 
-/* Links in subheading */
-.glm-auth-card .glm-auth-page-content header p a {
-  color: #2563eb;
-  font-weight: 600;
-  text-decoration: none;
+.glm-auth-card .fi-btn.fi-btn-color-primary:focus,
+.glm-auth-card button[type="submit"]:focus {
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.35), 0 12px 30px rgba(37,99,235,0.25) !important;
 }
 
-.glm-auth-card .glm-auth-page-content header p a:hover {
-  text-decoration: underline;
+/* Checkbox text */
+.glm-auth-card .fi-checkbox,
+.glm-auth-card .fi-fo-field-wrp {
+  color: rgba(226,232,240,0.9) !important;
 }
 
-/* Right panel gradient */
+/* Right panel – premium dark */
 .glm-auth-right {
-  background: linear-gradient(180deg, #f2f4f7 0%, #e8ecf1 100%);
-}
-
-.dark .glm-auth-right {
-  background: linear-gradient(180deg, rgb(17, 24, 39) 0%, rgb(3, 7, 18) 100%);
+  background: #0B1220;
 }

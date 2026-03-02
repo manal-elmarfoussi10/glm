@@ -4,37 +4,50 @@
     $hasLogo = $this->hasLogo();
 @endphp
 
-<div class="fi-simple-page glm-auth-card rounded-2xl border-0 p-8 sm:p-10 md:p-12">
+<div class="fi-simple-page glm-auth-card rounded-2xl p-8 sm:p-10 md:p-12">
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
-    <div class="glm-auth-page-content space-y-8">
+    <div class="glm-auth-page-content space-y-10">
         @if ($hasLogo)
-            <div class="flex justify-center lg:hidden">
-                <img src="{{ asset('images/light-logo.png') }}" alt="GLM" class="h-9 dark:hidden" />
-                <img src="{{ asset('images/dark-logo.png') }}" alt="GLM" class="h-9 hidden dark:block" />
+            <div class="flex flex-col items-center lg:hidden space-y-4 pb-2">
+                <img src="{{ url('/images/light-logo.png') }}" alt="GLM" class="h-20 w-20 object-contain" />
+           
             </div>
         @endif
 
         @if (filled($heading) || filled($subheading))
-            <header class="text-left space-y-3">
-                <span class="inline-block text-xs font-semibold uppercase tracking-widest text-[#2563EB]" style="font-family: 'Inter', sans-serif;">Connexion</span>
+            <header class="text-left space-y-4">
+                <span class="inline-block text-xs font-semibold uppercase tracking-widest text-blue-400" style="font-family: 'Inter', sans-serif;">Connexion</span>
                 @if (filled($heading))
-                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white tracking-tight leading-tight" style="font-family: 'Montserrat', sans-serif;">
+                    <h1 class="text-2xl font-bold text-white tracking-tight leading-tight mb-4" style="font-family: 'Montserrat', sans-serif;">
                         {{ $heading }}
                     </h1>
                 @endif
                 @if (filled($subheading))
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+                    <p class="text-base text-white/80 leading-relaxed glm-auth-subheading">
                         {!! $subheading !!}
                     </p>
                 @endif
             </header>
         @endif
 
-        <div class="fi-simple-page-form">
+        <div class="glm-auth-form fi-simple-page-form space-y-6 mt-6">
             {{ $this->content }}
         </div>
     </div>
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
+
+    {{-- Fallback: inject button label when Filament/Alpine fails to render (e.g. APP_URL mismatch) --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.querySelector('.glm-auth-card button[type="submit"]');
+            if (btn && !btn.textContent.trim()) {
+                const span = document.createElement('span');
+                span.className = 'fi-btn-label';
+                span.textContent = 'Se connecter';
+                btn.insertBefore(span, btn.firstChild);
+            }
+        });
+    </script>
 </div>

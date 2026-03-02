@@ -27,31 +27,32 @@
         {{-- Left panel: branding + logo --}}
         <div class="glm-auth-left hidden lg:flex lg:w-1/2 xl:w-[55%] bg-[#0F172A] text-white flex-col justify-between p-10 xl:p-16 relative overflow-hidden">
             <div class="glm-auth-shapes absolute inset-0 overflow-hidden" aria-hidden="true">
-                <div class="absolute top-20 left-10 w-72 h-72 bg-[#2563EB]/20 rounded-full blur-3xl animate-pulse"></div>
-                <div class="absolute bottom-32 right-20 w-96 h-96 bg-[#2563EB]/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
-                <div class="absolute top-1/2 left-1/3 w-64 h-64 border border-[#2563EB]/30 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
+                <div class="absolute top-20 left-10 w-72 h-72 bg-[#2563EB]/20 rounded-full blur-3xl glm-orb glm-orb-1"></div>
+                <div class="absolute bottom-32 right-20 w-96 h-96 bg-[#2563EB]/10 rounded-full blur-3xl glm-orb glm-orb-2"></div>
+                <div class="absolute top-1/2 left-1/3 w-64 h-64 border border-[#2563EB]/30 rounded-full glm-ring glm-orb-3"></div>
             </div>
-            <div class="relative z-10">
-                <a href="{{ filament()->getUrl() }}" class="inline-block glm-fade-in">
-                    <img src="{{ asset('images/light-logo.png') }}" alt="GLM" class="h-10 xl:h-12 w-auto" />
+            <div class="relative z-10 flex items-center gap-4 glm-fade-in">
+                <a href="{{ filament()->getUrl() }}" class="flex items-center gap-4">
+                    <img src="{{ url('/images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" />
+                 
                 </a>
             </div>
-            <div class="relative z-10 space-y-6 glm-slide-up">
-                <h2 class="text-2xl xl:text-3xl font-bold tracking-tight" style="font-family: 'Montserrat', sans-serif;">
+            <div class="relative z-10 space-y-8 glm-slide-up">
+                <h2 class="text-6xl xl:text-7xl font-bold tracking-tight leading-[1.05] text-white max-w-xl" style="font-family: 'Montserrat', sans-serif;">
                     Gestion Location Maroc
                 </h2>
-                <p class="text-white/80 text-lg max-w-md leading-relaxed" style="font-family: 'Inter', sans-serif;">
+                <p class="text-white/85 text-xl max-w-lg leading-relaxed mt-8" style="font-family: 'Inter', sans-serif;">
                     Gérez vos locations et contrats en toute simplicité. Accédez à votre espace professionnel.
                 </p>
             </div>
-            <div class="relative z-10 text-white/50 text-sm" style="font-family: 'Inter', sans-serif;">
+            <div class="relative z-10 text-white/55 text-sm" style="font-family: 'Inter', sans-serif;">
                 &copy; {{ date('Y') }} GLM. Tous droits réservés.
             </div>
         </div>
 
         {{-- Right panel: form --}}
-        <div class="glm-auth-right flex-1 flex flex-col justify-center items-center p-6 sm:p-10 bg-[#F2F4F7] dark:bg-gray-900">
-            <div class="w-full max-w-md glm-fade-in">
+        <div class="glm-auth-right flex-1 flex flex-col justify-center items-center p-8 sm:p-12 lg:p-16 bg-[#0B1220]">
+            <div class="w-full max-w-[420px] glm-fade-in">
                 {{ $slot }}
             </div>
         </div>

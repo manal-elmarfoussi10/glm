@@ -10,8 +10,8 @@
     <div class="glm-auth-page-content space-y-8">
         @if ($hasLogo)
             <div class="flex justify-center lg:hidden">
-                <img src="{{ asset('images/light-logo.png') }}" alt="GLM" class="h-9 dark:hidden" />
-                <img src="{{ asset('images/dark-logo.png') }}" alt="GLM" class="h-9 hidden dark:block" />
+                <img src="{{ url('images/light-logo.png') }}" alt="GLM" class="h-9 dark:hidden" />
+                <img src="{{ url('images/dark-logo.png') }}" alt="GLM" class="h-9 hidden dark:block" />
             </div>
         @endif
 

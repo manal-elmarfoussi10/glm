@@ -6,6 +6,8 @@ use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Html;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -56,11 +58,6 @@ class CustomLogin extends BaseLogin
     {
         return TextInput::make('password')
             ->label('Mot de passe')
-            ->hint(
-                filament()->hasPasswordReset()
-                    ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()">Mot de passe oublié ?</x-filament::link>'))
-                    : null
-            )
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')
@@ -89,5 +86,29 @@ class CustomLogin extends BaseLogin
     {
         return parent::getMultiFactorAuthenticateFormAction()
             ->label('Vérifier');
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        $forgotLink = filament()->hasPasswordReset()
+            ? Html::make(new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()">Mot de passe oublié ?</x-filament::link>')))
+            : null;
+
+        $components = [
+            $this->getEmailFormComponent(),
+            $this->getPasswordFormComponent(),
+            $this->getRememberFormComponent(),
+        ];
+
+        if ($forgotLink) {
+            $components[] = $forgotLink;
+        }
+
+        return $schema->components($components);
+    }
+
+    public function getFormContentComponent(): Component
+    {
+        return parent::getFormContentComponent();
     }
 }

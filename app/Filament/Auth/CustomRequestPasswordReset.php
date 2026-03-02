@@ -29,7 +29,7 @@ class CustomRequestPasswordReset extends BaseRequestPasswordReset
             return null;
         }
 
-        return new HtmlString('Retour à la connexion ? ' . $this->loginAction->toHtml());
+        return new HtmlString($this->loginAction->toHtml());
     }
 
     protected function getEmailFormComponent(): Component
@@ -45,7 +45,8 @@ class CustomRequestPasswordReset extends BaseRequestPasswordReset
     public function loginAction(): \Filament\Actions\Action
     {
         return parent::loginAction()
-            ->label('Retour à la connexion');
+            ->label('Retour à la connexion')
+            ->icon(null);
     }
 
     protected function getRequestFormAction(): \Filament\Actions\Action
