@@ -73,6 +73,24 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 4. **Optional**: Create a Filament admin user:  
    `php artisan make:filament-user`
 
+### Shared hosting (cannot change document root)
+
+If you **cannot** set the document root to `public` (e.g. Hostinger with fixed `public_html`):
+
+1. **Put the app outside `public_html`**  
+   Move the whole project so it sits **next to** `public_html`, not inside it, e.g.:
+   - `/home/username/glm/` ← full Laravel app (app, bootstrap, config, .env, vendor, **and** the `public` folder)
+   - `/home/username/public_html/` ← document root (unchanged)
+
+2. **Copy the contents of `glm/public/` into `public_html/`**  
+   So `public_html/` contains: `index.php`, `.htaccess`, `build/`, `css/`, `js/`, `fonts/`, `favicon.ico`, `robots.txt`, etc. (everything that is inside `glm/public/`).
+
+3. **Use the shared-hosting entry point**  
+   Replace `public_html/index.php` with the contents of `glm/public/index.shared.php` (or copy `index.shared.php` to `public_html/index.php`).  
+   That file tells PHP to load Laravel from `../glm`. If your app folder is not named `glm`, edit the `$appBasePath` line in `index.shared.php` to match (e.g. `'/../myapp'`).
+
+4. **Leave `.env` and the rest in** `/home/username/glm/`. The site will run from `public_html` but use the app in `glm/`.
+
 Repo: [https://github.com/manal-elmarfoussi10/glm](https://github.com/manal-elmarfoussi10/glm)
 
 ## License
