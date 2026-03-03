@@ -66,7 +66,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->status === 'active';
+        return $this->status === 'active' || is_null($this->status);
     }
 
     public function company()

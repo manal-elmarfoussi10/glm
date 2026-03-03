@@ -6,6 +6,10 @@ Route::get('/', function () {
     return redirect('/admin');
 });
 
+Route::get('/login', function () {
+    return redirect('/admin/login');
+})->name('login');
+
 Route::get('/welcome', function () {
     return view('welcome');
 });

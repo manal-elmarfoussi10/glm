@@ -1,0 +1,9 @@
+# Use this when your Hostinger document root is the Laravel root (public_html),
+# not public_html/public. Place this file in public_html (project root).
+# If you still get 404 on /admin/login, set document root to public_html/public instead.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/index.php [L]
+</IfModule>
