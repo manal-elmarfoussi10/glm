@@ -51,7 +51,8 @@ jobs:
 
             git reset --hard
             git clean -fd
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
 
             composer install --no-dev --optimize-autoloader
 
