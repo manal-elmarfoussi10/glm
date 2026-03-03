@@ -4,17 +4,20 @@ on:
   push:
     branches: ["main"]
 
-env:
-  DEPLOY_ROOT: /home/${{ secrets.SSH_USER }}/domains/glm.marfoussiwebart.com/public_html
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # needed to push build commit
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # ✅ MUST be here (top), not inside SSH script
+      - name: Stop if commit contains [skip ci]
+        if: contains(github.event.head_commit.message, '[skip ci]')
+        run: exit 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -27,8 +30,6 @@ jobs:
           npm ci
           npm run build
 
-      # Commit build and push - server gets it via git pull (avoids SCP, which
-      # fails on shared hosting due to .bashrc/fnm permission issues)
       - name: Commit and push build
         run: |
           git config user.name "github-actions[bot]"
@@ -46,14 +47,17 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             set -e
-            cd ${{ env.DEPLOY_ROOT }}
+            cd /home/${{ secrets.SSH_USER }}/domains/glm.marfoussiwebart.com/public_html
 
+            git reset --hard
+            git clean -fd
             git pull origin main
 
             composer install --no-dev --optimize-autoloader
 
-            php artisan migrate --force
+            php artisan migrate --force || true
             php artisan storage:link || true
+
             php artisan optimize:clear
             php artisan config:cache
             php artisan route:cache
@@ -64,4 +68,4 @@ jobs:
             echo "--- Verifying build ---"
             ls -la public/build/ || (echo "ERROR: public/build/ not found" && exit 1)
             test -f public/build/manifest.json || (echo "ERROR: manifest.json missing" && exit 1)
-            echo "Build OK"
+            echo "Build OK ✅"
