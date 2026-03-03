@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/welcome', function () {
     return view('welcome');
 });
+
+Route::get('/pending-approval', function () {
+    return view('filament.pages.auth.pending-approval');
+})->name('auth.pending-approval');

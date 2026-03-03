@@ -32,6 +32,10 @@ class User extends Authenticatable implements FilamentUser
         'cin',
         'preferences',
         'last_login_at',
+        'requested_company_name',
+        'requested_ice',
+        'fleet_size',
+        'operating_cities',
     ];
 
     /**
@@ -55,13 +59,14 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'preferences' => 'array',
+            'operating_cities' => 'array',
             'last_login_at' => 'datetime',
         ];
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        return $this->status === 'active';
     }
 
     public function company()

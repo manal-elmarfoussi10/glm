@@ -36,32 +36,38 @@
 
 .glm-auth-card .glm-auth-form,
 .glm-auth-card .fi-simple-page-form {
-  gap: 2rem;
+  gap: 1rem !important;
 }
 
-/* Real spacing between Filament form fields (login, register, reset) */
+/* Compact spacing between form field groups */
 .glm-auth-card .fi-fo-field-wrp:not(:last-child),
 .glm-auth-card .fi-fo-field-wrp-container:not(:last-child),
 .glm-auth-card .fi-grid-col:not(:last-child) {
-  margin-bottom: 24px !important;
-}
-
-/* mt-6 between password input and checkbox */
-.glm-auth-card .fi-fo-field-wrp:has(input[type="checkbox"]),
-.glm-auth-card .fi-grid-col:has(input[type="checkbox"]) {
-  margin-top: 24px !important;
-}
-
-/* mt-3 between checkbox and "Mot de passe oublié ?" – override checkbox margin-bottom */
-.glm-auth-card .fi-fo-field-wrp:has(input[type="checkbox"]):not(:last-child),
-.glm-auth-card .fi-grid-col:has(input[type="checkbox"]):not(:last-child) {
   margin-bottom: 12px !important;
 }
 
-/* mt-6 above submit button */
+/* Tight label-to-input gap (professional, compact) */
+.glm-auth-card .fi-fo-field-wrp,
+.glm-auth-card .fi-fo-field-wrp-container {
+  gap: 0 !important;
+  row-gap: 4px !important;
+}
+
+/* Spacing around checkbox (remember me, forgot link) */
+.glm-auth-card .fi-fo-field-wrp:has(input[type="checkbox"]),
+.glm-auth-card .fi-grid-col:has(input[type="checkbox"]) {
+  margin-top: 12px !important;
+}
+
+.glm-auth-card .fi-fo-field-wrp:has(input[type="checkbox"]):not(:last-child),
+.glm-auth-card .fi-grid-col:has(input[type="checkbox"]):not(:last-child) {
+  margin-bottom: 8px !important;
+}
+
+/* Spacing above submit button */
 .glm-auth-card .fi-sc-actions,
 .glm-auth-card .fi-ac {
-  margin-top: 24px !important;
+  margin-top: 16px !important;
 }
 
 /* Make headings readable */
@@ -70,12 +76,13 @@
   color: rgba(255,255,255,0.92) !important;
 }
 
-/* Labels */
+/* Labels – compact gap to input */
 .glm-auth-card .fi-fo-field-wrp-label,
+.glm-auth-card .fi-fo-field-wrp > label,
 .glm-auth-card label {
-  color: rgba(226,232,240,0.95) !important; /* slate-200 */
+  color: rgba(226,232,240,0.95) !important;
   font-weight: 500;
-  margin-bottom: 16px !important;
+  margin-bottom: 4px !important;
 }
 
 /* Helper text + hints */

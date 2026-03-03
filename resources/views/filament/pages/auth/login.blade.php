@@ -38,16 +38,22 @@
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
 
-    {{-- Fallback: inject button label when Filament/Alpine fails to render (e.g. APP_URL mismatch) --}}
+    {{-- Fallback: ensure submit button always shows label (Filament/Alpine can fail to render) --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.querySelector('.glm-auth-card button[type="submit"]');
-            if (btn && !btn.textContent.trim()) {
-                const span = document.createElement('span');
-                span.className = 'fi-btn-label';
-                span.textContent = 'Se connecter';
-                btn.insertBefore(span, btn.firstChild);
+        (function ensureLoginButtonLabel() {
+            function inject() {
+                const btn = document.querySelector('.glm-auth-card button[type="submit"], .fi-simple-page button[type="submit"]');
+                if (btn && !btn.textContent.trim()) {
+                    const span = document.createElement('span');
+                    span.className = 'fi-btn-label';
+                    span.textContent = 'Se connecter';
+                    btn.insertBefore(span, btn.firstChild);
+                }
             }
-        });
+            document.addEventListener('DOMContentLoaded', inject);
+            document.addEventListener('livewire:navigated', inject);
+            setTimeout(inject, 500);
+            setTimeout(inject, 1500);
+        })();
     </script>
 </div>
