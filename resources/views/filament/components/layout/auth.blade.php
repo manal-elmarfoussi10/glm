@@ -7,6 +7,22 @@
     if (is_string($maxContentWidth)) {
         $maxContentWidth = Width::tryFrom($maxContentWidth) ?? $maxContentWidth;
     }
+
+    $resolvedWidth = $maxContentWidth instanceof Width ? $maxContentWidth->value : $maxContentWidth;
+    $maxWidthClass = match ($resolvedWidth) {
+        'xs' => 'max-w-xs',
+        'sm' => 'max-w-sm',
+        'md' => 'max-w-md',
+        'lg' => 'max-w-lg',
+        'xl' => 'max-w-xl',
+        '2xl' => 'max-w-2xl',
+        '3xl' => 'max-w-3xl',
+        '4xl' => 'max-w-4xl',
+        '5xl' => 'max-w-5xl',
+        '6xl' => 'max-w-6xl',
+        '7xl' => 'max-w-7xl',
+        default => 'max-w-[420px]',
+    };
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
@@ -50,7 +66,7 @@
 
         {{-- Right panel: form --}}
         <div class="glm-auth-right flex-1 flex flex-col justify-center items-center p-8 sm:p-12 lg:p-16 bg-[#0B1220]">
-            <div class="w-full max-w-[420px] glm-fade-in">
+            <div class="w-full {{ $maxWidthClass }} glm-fade-in">
                 {{ $slot }}
             </div>
         </div>
