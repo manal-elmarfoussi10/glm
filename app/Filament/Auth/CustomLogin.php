@@ -50,7 +50,7 @@ class CustomLogin extends BaseLogin
             ->label('Adresse e-mail')
             ->email()
             ->required()
-            ->autocomplete()
+            ->autocomplete('username')
             ->autofocus();
     }
 

@@ -7,37 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      # ✅ MUST be here (top), not inside SSH script
-      - name: Stop if commit contains [skip ci]
-        if: contains(github.event.head_commit.message, '[skip ci]')
-        run: exit 0
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-
-      - name: Install and build assets
-        run: |
-          npm ci
-          npm run build
-
-      - name: Commit and push build
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -f public/build
-          git diff --staged --quiet || git commit -m "chore: build assets for production [skip ci]"
-          git push
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -49,8 +19,6 @@ jobs:
             set -e
             cd /home/${{ secrets.SSH_USER }}/domains/glm.marfoussiwebart.com/public_html
 
-            git reset --hard
-            git clean -fd
             git fetch origin main
             git reset --hard origin/main
 
@@ -67,6 +35,6 @@ jobs:
             chmod -R 775 storage bootstrap/cache
 
             echo "--- Verifying build ---"
-            ls -la public/build/ || (echo "ERROR: public/build/ not found" && exit 1)
-            test -f public/build/manifest.json || (echo "ERROR: manifest.json missing" && exit 1)
+            ls -la public/build/ || (echo "WARN: public/build/ not found – run npm run build locally and commit public/build before pushing" && exit 1)
+            test -f public/build/manifest.json || (echo "WARN: manifest.json missing" && exit 1)
             echo "Build OK ✅"

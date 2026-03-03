@@ -39,6 +39,7 @@
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_PAGE_END, scopes: $this->getRenderHookScopes()) }}
 
     {{-- Fallback: ensure submit button always shows label (Filament/Alpine can fail to render) --}}
+    {{-- Re-enable inputs after failed login so user can type again without refreshing --}}
     <script>
         (function ensureLoginButtonLabel() {
             function inject() {
@@ -54,6 +55,25 @@
             document.addEventListener('livewire:navigated', inject);
             setTimeout(inject, 500);
             setTimeout(inject, 1500);
+        })();
+
+        (function reenableInputsAfterFailedLogin() {
+            function enableInputs() {
+                const card = document.querySelector('.glm-auth-card');
+                if (!card) return;
+                card.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]').forEach(function (input) {
+                    input.removeAttribute('disabled');
+                    input.readOnly = false;
+                });
+                card.querySelectorAll('button[type="submit"]').forEach(function (btn) {
+                    btn.removeAttribute('disabled');
+                });
+            }
+            document.addEventListener('livewire:load', enableInputs);
+            document.addEventListener('livewire:request-finished', function () {
+                setTimeout(enableInputs, 100);
+            });
+            document.addEventListener('livewire:navigated', enableInputs);
         })();
     </script>
 </div>
