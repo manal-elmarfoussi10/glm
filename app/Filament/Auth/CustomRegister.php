@@ -32,11 +32,19 @@ class CustomRegister extends BaseRegister
         return 'Créer un compte';
     }
 
+    public function getMaxWidth(): string | Htmlable | null
+    {
+        return '3xl';
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Grid::make(2)->schema([
+                Grid::make([
+                    'default' => 1,
+                    'sm' => 2,
+                ])->schema([
                     $this->getNameFormComponent(),
                     $this->getEmailFormComponent(),
                     TextInput::make('requested_company_name')

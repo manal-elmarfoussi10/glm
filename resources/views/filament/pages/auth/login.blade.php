@@ -58,8 +58,8 @@
         })();
 
         (function reenableInputsAfterFailedLogin() {
-            function enableInputs() {
-                const card = document.querySelector('.glm-auth-card');
+            function resetFormState() {
+                var card = document.querySelector('.glm-auth-card');
                 if (!card) return;
                 card.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]').forEach(function (input) {
                     input.removeAttribute('disabled');
@@ -67,13 +67,29 @@
                 });
                 card.querySelectorAll('button[type="submit"]').forEach(function (btn) {
                     btn.removeAttribute('disabled');
+                    btn.disabled = false;
+                    btn.style.pointerEvents = '';
+                    btn.querySelectorAll('.fi-loading-indicator, [class*="fi-loading"], [class*="loading-indicator"]').forEach(function (el) { el.style.setProperty('display', 'none', 'important'); });
+                    btn.querySelectorAll('svg').forEach(function (svg) {
+                        if (svg.closest('[class*="loading"]') || svg.getAttribute('class') && svg.getAttribute('class').indexOf('animate') !== -1) {
+                            svg.style.setProperty('display', 'none', 'important');
+                        }
+                    });
+                    var spans = btn.querySelectorAll('span');
+                    spans.forEach(function (s) {
+                        if (s.textContent.trim().indexOf('Se connecter') !== -1 || (s.className && s.className.indexOf('fi-btn-label') !== -1)) {
+                            s.style.setProperty('display', 'inline', 'important');
+                            s.style.setProperty('visibility', 'visible', 'important');
+                        }
+                    });
                 });
             }
-            document.addEventListener('livewire:load', enableInputs);
+            document.addEventListener('livewire:load', resetFormState);
             document.addEventListener('livewire:request-finished', function () {
-                setTimeout(enableInputs, 100);
+                resetFormState();
+                for (var i = 1; i <= 6; i++) { setTimeout(resetFormState, i * 300); }
             });
-            document.addEventListener('livewire:navigated', enableInputs);
+            document.addEventListener('livewire:navigated', resetFormState);
         })();
     </script>
 </div>

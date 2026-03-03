@@ -107,7 +107,7 @@
   border-radius: 0 !important;
 }
 
-/* Email & text: single box on wrapper, minimal left padding so text starts near edge */
+/* Email & text: single box on wrapper, same left spacing as password (pl-3 = 12px) */
 .glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp,
 .glm-auth-card .fi-fo-field-wrp:has(input[type="text"]) .fi-input-wrp,
 .glm-auth-card .fi-grid-col:has(input[type="email"]) .fi-input-wrp,
@@ -115,7 +115,7 @@
   display: flex !important;
   align-items: center !important;
   height: 42px !important;
-  padding: 0 12px 0 10px !important;
+  padding: 0 12px !important;
   background: rgba(255,255,255,0.06) !important;
   border: 1px solid rgba(255,255,255,0.12) !important;
   border-radius: 10px !important;
@@ -128,8 +128,7 @@
 .glm-auth-card .fi-grid-col:has(input[type="text"]) .fi-input-wrp input {
   flex: 1 !important;
   min-width: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
+  padding: 0 !important;
   border: none !important;
   background: transparent !important;
   box-shadow: none !important;
@@ -209,6 +208,15 @@
   box-sizing: border-box !important;
 }
 
+/* Email/text: no input padding – wrapper provides 12px (match password). Override generic padding so caret starts near left edge. */
+.glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp input[type="email"],
+.glm-auth-card .fi-fo-field-wrp:has(input[type="text"]) .fi-input-wrp input[type="text"],
+.glm-auth-card .fi-grid-col:has(input[type="email"]) .fi-input-wrp input[type="email"],
+.glm-auth-card .fi-grid-col:has(input[type="text"]) .fi-input-wrp input[type="text"] {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
 /* Password: box comes from wrapper, input has no border */
 .glm-auth-card .fi-fo-field-wrp:has(input[type="password"]) .fi-input-wrp input,
 .glm-auth-card .fi-grid-col:has(input[type="password"]) .fi-input-wrp input {
@@ -280,6 +288,20 @@
 /* Force button label visible when Alpine filamentFormButton fails to load (APP_URL mismatch) */
 .glm-auth-card button[type="submit"] span[x-show] {
   display: inline !important;
+}
+
+/* When login shows an error (wrong credentials), hide loading spinner so user can retry */
+.glm-auth-card:has([role="alert"]) button[type="submit"] .fi-loading-indicator,
+.glm-auth-card:has([role="alert"]) button[type="submit"] [class*="fi-loading"],
+.glm-auth-card:has(.fi-fo-field-wrp-error) button[type="submit"] .fi-loading-indicator,
+.glm-auth-card:has(.fi-fo-field-wrp-error) button[type="submit"] [class*="fi-loading"],
+.glm-auth-card:has([class*="error-message"]) button[type="submit"] .fi-loading-indicator,
+.glm-auth-card:has([class*="error-message"]) button[type="submit"] [class*="fi-loading"] {
+  display: none !important;
+}
+.glm-auth-card:has([role="alert"]) button[type="submit"],
+.glm-auth-card:has(.fi-fo-field-wrp-error) button[type="submit"] {
+  pointer-events: auto !important;
 }
 
 .glm-auth-card .fi-btn.fi-btn-color-primary:hover,
