@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap');
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* ========== GLM Aesthetic Upgrade (Light Theme Only) ========== */
+:root,
+.dark {
+    /* Color Palette - HSL for better transparency control */
+    --glm-primary-hsl: 221, 83%, 53%;
+    /* #2563EB Electric Blue */
+    --glm-primary: hsl(var(--glm-primary-hsl));
+    --glm-primary-soft: hsla(var(--glm-primary-hsl), 0.08);
+    --glm-primary-active: hsla(var(--glm-primary-hsl), 0.15);
+
+    --glm-slate-900: #0F172A;
+    /* Deep Navy */
+    --glm-slate-800: #1E293B;
+    --glm-slate-600: #475569;
+
+    --glm-bg-start: #F8FAFC;
+    --glm-bg-end: #EFF6FF;
+
+    --glm-glass-bg: rgba(255, 255, 255, 0.75);
+    --glm-glass-border: rgba(255, 255, 255, 0.5);
+    --glm-shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    --glm-shadow-hover: 0 10px 25px -4px rgba(37, 99, 235, 0.1);
+
+    /* Layout Constants */
+    --glm-sidebar-width: 18rem;
+    /* w-72 (288px) */
+}
+
+/* ========== 1. Global Reset & Animations ========== */
+.fi-body,
+.dark .fi-body {
+    background: linear-gradient(135deg, var(--glm-bg-start) 0%, var(--glm-bg-end) 100%) fixed !important;
+    color: var(--glm-slate-800) !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9375rem;
+    overflow-x: hidden;
+}
+
+.fi-main-ctn,
+.fi-main {
+    overflow: visible !important;
+    animation: fi-fade-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    min-width: 0;
+    /* Prevent overflow */
+}
+
+/* Ensure main content starts after the sidebar on desktop */
+@media (min-width: 1024px) {
+    .fi-main-ctn {
+        padding-left: var(--glm-sidebar-width) !important;
+    }
+}
+
+@keyframes fi-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========== 2. Sidebar (Glassmorphism) ========== */
+.fi-sidebar,
+.dark .fi-sidebar {
+    background: var(--glm-glass-bg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-right: 1px solid var(--glm-glass-border) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+}
+
+/* Fix sidebar width and overaly on desktop */
+@media (min-width: 1024px) {
+    .fi-sidebar {
+        width: var(--glm-sidebar-width) !important;
+        transform: none !important;
+        position: fixed !important;
+        left: 0 !important;
+        z-index: 10 !important;
+    }
+}
+
+.fi-sidebar-header,
+.dark .fi-sidebar-header {
+    background: transparent !important;
+    border-bottom: 1px solid var(--glm-glass-border);
+}
+
+.fi-sidebar-item-button,
+.dark .fi-sidebar-item-button {
+    margin: 0.25rem 0.5rem;
+    padding: 0.625rem 0.75rem !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--glm-slate-600) !important;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+}
+
+.fi-sidebar-item-button:hover {
+    background: var(--glm-primary-soft) !important;
+    color: var(--glm-primary) !important;
+    transform: translateX(4px);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-button,
+.dark .fi-sidebar-item.fi-active .fi-sidebar-item-button {
+    background: var(--glm-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px hsla(var(--glm-primary-hsl), 0.3);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-button:hover {
+    transform: none;
+}
+
+.fi-sidebar-item.fi-active .fi-icon {
+    color: #fff !important;
+}
+
+/* ========== 3. Topbar (Floating Glass) ========== */
+.fi-topbar,
+.dark .fi-topbar {
+    background: var(--glm-glass-bg) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid var(--glm-glass-border) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+    overflow: visible !important;
+}
+
+.fi-topbar-ctn {
+    overflow: visible !important;
+}
+
+/* Ensure topbar aligns with the sidebar on desktop */
+@media (min-width: 1024px) {
+    .fi-topbar {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 20 !important;
+        padding-left: var(--glm-sidebar-width) !important;
+    }
+}
+
+.fi-header-heading,
+.dark .fi-header-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--glm-slate-900);
+}
+
+/* ========== 4. Cards & Sections (Sleek Clean Surface) ========== */
+.fi-main [class*="fi-section"],
+.fi-main [class*="widget"],
+.fi-main [class*="fi-ta-ctn"],
+.dark .fi-main [class*="fi-section"],
+.dark .fi-main [class*="widget"],
+.dark .fi-main [class*="fi-ta-ctn"] {
+    background: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    border-radius: 1rem !important;
+    box-shadow: var(--glm-shadow-soft) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fi-main [class*="fi-section"]:hover,
+.fi-main [class*="widget"]:hover,
+.dark .fi-main [class*="fi-section"]:hover,
+.dark .fi-main [class*="widget"]:hover {
+    box-shadow: var(--glm-shadow-hover) !important;
+    transform: translateY(-2px);
+}
+
+/* Table specific spacing & modern feel */
+.fi-ta-header-cell-label {
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--glm-slate-600);
+}
+
+.fi-ta-record-action,
+.fi-ta-action {
+    transition: transform 0.2s ease;
+}
+
+.fi-ta-record-action:hover,
+.fi-ta-action:hover {
+    transform: scale(1.05);
+}
+
+/* ========== 5. Buttons & Badges ========== */
+.fi-btn,
+.dark .fi-btn {
+    border-radius: 0.75rem !important;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600 !important;
+}
+
+.fi-btn-primary,
+.dark .fi-btn-primary {
+    background: var(--glm-primary) !important;
+    box-shadow: 0 4px 12px hsla(var(--glm-primary-hsl), 0.25);
+}
+
+.fi-btn-primary:hover {
+    background: #1d4ed8 !important;
+    box-shadow: 0 6px 16px hsla(var(--glm-primary-hsl), 0.35);
+}
+
+.fi-badge {
+    font-weight: 600 !important;
+    letter-spacing: 0.02em;
+}
+
+/* ========== 6. Misc UI Fixes ========== */
+.fi-theme-switcher {
+    display: none !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.15);
+}

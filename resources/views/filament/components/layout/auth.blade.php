@@ -7,34 +7,41 @@
     if (is_string($maxContentWidth)) {
         $maxContentWidth = Width::tryFrom($maxContentWidth) ?? $maxContentWidth;
     }
-
-    $resolvedWidth = $maxContentWidth instanceof Width ? $maxContentWidth->value : $maxContentWidth;
-    $maxWidthClass = match ($resolvedWidth) {
-        'xs' => 'max-w-xs',
-        'sm' => 'max-w-sm',
-        'md' => 'max-w-md',
-        'lg' => 'max-w-lg',
-        'xl' => 'max-w-xl',
-        '2xl' => 'max-w-2xl',
-        '3xl' => 'max-w-3xl',
-        '4xl' => 'max-w-4xl',
-        '5xl' => 'max-w-5xl',
-        '6xl' => 'max-w-6xl',
-        '7xl' => 'max-w-7xl',
-        default => 'max-w-[420px]',
-    };
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
     {{-- Load auth CSS directly so it always applies (Filament base may not render @stack('styles')) --}}
     @vite(['resources/css/app.css', 'resources/css/auth.css'])
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@500;600;700&display=swap');
+
         @keyframes glm-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes glm-slide-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
         .glm-fade-in { animation: glm-fade-in 0.6s ease-out forwards; }
         .glm-slide-up { animation: glm-slide-up 0.7s ease-out 0.2s forwards; opacity: 0; }
+
+        /* ✅ FIX: remove the huge left spacing inside email input on auth pages */
+        .glm-auth-card input[type="email"]{
+            padding-left: 1rem !important;      /* normal spacing */
+            padding-right: 1rem !important;
+            text-indent: 0 !important;
+            background-position: 1rem center !important; /* if browser adds icons */
+        }
+
+        /* ✅ If Filament keeps adding "prefix space", force all auth inputs to match */
+        .glm-auth-card input[type="text"],
+        .glm-auth-card input[type="password"]{
+            text-indent: 0 !important;
+        }
+
+        /* ✅ Optional: if Filament renders an empty prefix icon container, hide it */
+        .glm-auth-card .fi-input-wrp-prefix:empty{
+            display: none !important;
+        }
     </style>
+
     <div class="glm-auth-layout fi-body min-h-screen flex flex-col lg:flex-row">
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_START, scopes: $renderHookScopes) }}
 
@@ -45,12 +52,13 @@
                 <div class="absolute bottom-32 right-20 w-96 h-96 bg-[#2563EB]/10 rounded-full blur-3xl glm-orb glm-orb-2"></div>
                 <div class="absolute top-1/2 left-1/3 w-64 h-64 border border-[#2563EB]/30 rounded-full glm-ring glm-orb-3"></div>
             </div>
+
             <div class="relative z-10 flex items-center gap-4 glm-fade-in">
                 <a href="{{ filament()->getUrl() }}" class="flex items-center gap-4">
                     <img src="{{ url('/images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" />
-                 
                 </a>
             </div>
+
             <div class="relative z-10 space-y-8 glm-slide-up">
                 <h2 class="text-6xl xl:text-7xl font-bold tracking-tight leading-[1.05] text-white max-w-xl" style="font-family: 'Montserrat', sans-serif;">
                     Gestion Location Maroc
@@ -59,6 +67,7 @@
                     Gérez vos locations et contrats en toute simplicité. Accédez à votre espace professionnel.
                 </p>
             </div>
+
             <div class="relative z-10 text-white/55 text-sm" style="font-family: 'Inter', sans-serif;">
                 &copy; {{ date('Y') }} GLM. Tous droits réservés.
             </div>
@@ -66,7 +75,7 @@
 
         {{-- Right panel: form --}}
         <div class="glm-auth-right flex-1 flex flex-col justify-center items-center p-8 sm:p-12 lg:p-16 bg-[#0B1220]">
-            <div class="w-full {{ $maxWidthClass }} glm-fade-in">
+            <div class="w-full max-w-[420px] glm-fade-in">
                 {{ $slot }}
             </div>
         </div>

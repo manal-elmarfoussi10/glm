@@ -15,7 +15,7 @@ class User extends Authenticatable implements FilamentUser
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that should be assignable.
      *
      * @var list<string>
      */
@@ -32,10 +32,17 @@ class User extends Authenticatable implements FilamentUser
         'cin',
         'preferences',
         'last_login_at',
-        'requested_company_name',
-        'requested_ice',
-        'fleet_size',
         'operating_cities',
+        'requested_plan',
+        'requested_country',
+        'registration_message',
+        'rejection_reason',
+        'admin_notes',
+        'registration_logs',
+        'approved_at',
+        'approved_by',
+        'rejected_at',
+        'rejected_by',
     ];
 
     /**
@@ -60,7 +67,10 @@ class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
             'preferences' => 'array',
             'operating_cities' => 'array',
+            'registration_logs' => 'array',
             'last_login_at' => 'datetime',
+            'approved_at' => 'datetime',
+            'rejected_at' => 'datetime',
         ];
     }
 
@@ -77,5 +87,41 @@ class User extends Authenticatable implements FilamentUser
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function rejectedBy()
+    {
+        return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    public function logRegistrationAction(string $action, ?string $note = null, ?array $metadata = [])
+    {
+        $logs = $this->registration_logs ?? [];
+        $logs[] = [
+            'action' => $action,
+            'note' => $note,
+            'metadata' => $metadata,
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()?->name,
+            'timestamp' => now()->toDateTimeString(),
+        ];
+        
+        $this->registration_logs = $logs;
+        $this->save();
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isSupport(): bool
+    {
+        return $this->role === 'support';
     }
 }

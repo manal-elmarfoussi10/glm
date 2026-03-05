@@ -1,6 +1,15 @@
 {
+  "resources/css/app-admin.css": {
+    "file": "assets/app-admin-D5m12b5w.css",
+    "src": "resources/css/app-admin.css",
+    "isEntry": true,
+    "name": "app-admin",
+    "names": [
+      "app-admin.css"
+    ]
+  },
   "resources/css/app.css": {
-    "file": "assets/app-DrsNc-Ak.css",
+    "file": "assets/app-BBTbW0MI.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -9,7 +18,7 @@
     ]
   },
   "resources/css/auth.css": {
-    "file": "assets/auth-P73pxHdB.css",
+    "file": "assets/auth-41mCgi4e.css",
     "src": "resources/css/auth.css",
     "isEntry": true,
     "name": "auth",
@@ -18,7 +27,7 @@
     ]
   },
   "resources/css/filament/admin/theme.css": {
-    "file": "assets/theme-BcqqCQP8.css",
+    "file": "assets/theme-DLIBlSB-.css",
     "src": "resources/css/filament/admin/theme.css",
     "isEntry": true,
     "name": "theme",

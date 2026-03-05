@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Filament\Resources\Companies\Pages;
+
+use App\Filament\Resources\Companies\CompanyResource;
+use Filament\Actions;
+use Filament\Resources\Pages\ViewRecord;
+
+class ViewCompany extends ViewRecord
+{
+    protected static string $resource = CompanyResource::class;
+    
+    public function hasCombinedRelationManagerTabsWithContent(): bool
+    {
+        return true;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\EditAction::make(),
+        ];
+    }
+}

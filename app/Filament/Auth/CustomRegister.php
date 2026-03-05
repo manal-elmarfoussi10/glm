@@ -4,6 +4,8 @@ namespace App\Filament\Auth;
 
 use Filament\Auth\Pages\Register as BaseRegister;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TagsInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
@@ -12,13 +14,14 @@ use Filament\Auth\Events\Registered;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Facades\Filament;
 use Filament\Schemas\Components\Component;
+use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 
 class CustomRegister extends BaseRegister
 {
-    protected static string $layout = 'filament.components.layout.auth';
+    protected static string $layout = 'filament.components.layout.auth-register';
 
     protected string $view = 'filament.pages.auth.register';
 
@@ -32,7 +35,7 @@ class CustomRegister extends BaseRegister
         return 'Créer un compte';
     }
 
-    public function getMaxWidth(): string | Htmlable | null
+    public function getMaxWidth(): Width | string | null
     {
         return '3xl';
     }
@@ -41,10 +44,7 @@ class CustomRegister extends BaseRegister
     {
         return $schema
             ->components([
-                Grid::make([
-                    'default' => 1,
-                    'sm' => 2,
-                ])->schema([
+                Grid::make(1)->schema([
                     $this->getNameFormComponent(),
                     $this->getEmailFormComponent(),
                     TextInput::make('requested_company_name')
@@ -55,14 +55,34 @@ class CustomRegister extends BaseRegister
                         ->label('ICE')
                         ->required()
                         ->maxLength(255),
+                    TextInput::make('phone')
+                        ->label('Téléphone')
+                        ->tel()
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('requested_country')
+                        ->label('Pays')
+                        ->required()
+                        ->maxLength(255),
+                    Select::make('requested_plan')
+                        ->label('Plan choisi')
+                        ->options([
+                            'starter' => 'Starter',
+                            'professional' => 'Professional',
+                            'enterprise' => 'Enterprise',
+                        ])
+                        ->required(),
                     TextInput::make('fleet_size')
                         ->label('Taille de la flotte (Nombre de véhicules)')
                         ->numeric()
                         ->required(),
                     TagsInput::make('operating_cities')
                         ->label('Villes d\'opération')
-                        ->placeholder('Entrer une ville et appuyer sur Entrée')
-                        ->required(),
+                        ->placeholder('Ex. Casablanca')
+                        ->helperText('Saisir une ville puis appuyer sur Entrée pour l\'ajouter. Optionnel.'),
+                    Textarea::make('registration_message')
+                        ->label('Message / Notes (Optionnel)')
+                        ->rows(3),
                     $this->getPasswordFormComponent(),
                     $this->getPasswordConfirmationFormComponent(),
                 ]),
@@ -112,14 +132,16 @@ class CustomRegister extends BaseRegister
 
         event(new Registered($user));
 
-        $this->sendEmailVerificationNotification($user);
+        try {
+            $this->sendEmailVerificationNotification($user);
+        } catch (\Throwable $e) {
+            report($e);
+            // Don't block redirect if email fails (e.g. mail not configured)
+        }
 
-        // DO NOT LOGIN the user!
-        // Filament::auth()->login($user);
-        // session()->regenerate();
-
-        // Redirect to a custom pending approval page
-        return redirect()->route('auth.pending-approval');
+        // Trigger redirect in Livewire so the client actually navigates to the success page
+        $this->redirect(route('auth.pending-approval'));
+        return app(RegistrationResponse::class);
     }
 
     public function getSubheading(): string | Htmlable | null

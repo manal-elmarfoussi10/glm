@@ -47,7 +47,14 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "./vendor/bin/phpunit"
+        ],
+        "qa": [
+            "@test",
+            "bash scripts/qa-run.sh"
+        ],
+        "qa:report": [
+            "bash scripts/qa-report.sh"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

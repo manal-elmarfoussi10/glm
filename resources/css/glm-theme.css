@@ -1,0 +1,55 @@
+/* ========== GLM Design Tokens – Light & Dark ========== */
+/* Use class .dark on <html> to switch. Toggle persists in localStorage (glm_theme). */
+
+:root {
+    /* Topbar / active menu blue (same family as sidebar active) */
+    --glm-primary: #2F66F3;
+    --glm-primary-2: #1F4FDB;
+    --glm-primary-soft: rgba(47, 102, 243, 0.18);
+    /* Light theme – text & surfaces (readable on light bg) */
+    --glm-text: #0F172A;
+    --glm-muted: #475569;
+    --glm-card: #FFFFFF;
+    --glm-border: rgba(15, 23, 42, 0.08);
+    --bg: #F7FAFF;
+    --surface: #FFFFFF;
+    --surface-2: #F2F6FF;
+    --border: rgba(15, 23, 42, 0.10);
+    --text: #0F172A;
+    --muted: #475569;
+    --primary: #2563EB;
+    --primary-2: #1D4ED8;
+    --success: #059669;
+    --warning: #D97706;
+    --danger: #DC2626;
+    --shadow-soft: 0 4px 24px -4px rgba(15, 23, 42, 0.08), 0 8px 16px -6px rgba(15, 23, 42, 0.04);
+    --shadow-strong: 0 10px 40px -10px rgba(15, 23, 42, 0.15), 0 4px 12px -4px rgba(15, 23, 42, 0.08);
+    --success-bg: rgba(5, 150, 105, 0.12);
+    --success-border: rgba(5, 150, 105, 0.35);
+    --danger-bg: rgba(220, 38, 38, 0.12);
+    --danger-border: rgba(220, 38, 38, 0.35);
+}
+
+.dark {
+    --glm-text: rgba(255, 255, 255, 0.92);
+    --glm-muted: rgba(255, 255, 255, 0.60);
+    --glm-card: rgba(255, 255, 255, 0.06);
+    --glm-border: rgba(255, 255, 255, 0.10);
+    --bg: #0B1220;
+    --surface: rgba(255, 255, 255, 0.06);
+    --surface-2: rgba(255, 255, 255, 0.09);
+    --border: rgba(255, 255, 255, 0.10);
+    --text: rgba(255, 255, 255, 0.92);
+    --muted: rgba(255, 255, 255, 0.60);
+    --primary: #3B82F6;
+    --primary-2: #2563EB;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --shadow-soft: 0 4px 24px -4px rgba(0, 0, 0, 0.25), 0 8px 16px -6px rgba(0, 0, 0, 0.15);
+    --shadow-strong: 0 20px 60px -10px rgba(0, 0, 0, 0.4), 0 8px 24px -8px rgba(0, 0, 0, 0.2);
+    --success-bg: rgba(16, 185, 129, 0.15);
+    --success-border: rgba(16, 185, 129, 0.35);
+    --danger-bg: rgba(239, 68, 68, 0.15);
+    --danger-border: rgba(239, 68, 68, 0.35);
+}

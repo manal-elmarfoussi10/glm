@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - link "GLM" [ref=e9] [cursor=pointer]:
+        - /url: http://127.0.0.1:8000/admin
+        - img "GLM" [ref=e10]
+      - generic [ref=e11]:
+        - heading "Gestion Location Maroc" [level=2] [ref=e12]
+        - paragraph [ref=e13]: Gérez vos locations et contrats en toute simplicité. Accédez à votre espace professionnel.
+      - generic [ref=e14]: © 2026 GLM. Tous droits réservés.
+    - generic [ref=e18]:
+      - banner [ref=e19]:
+        - generic [ref=e20]: Connexion
+        - heading "Connexion à votre espace" [level=1] [ref=e21]
+        - paragraph [ref=e22]:
+          - text: Pas encore de compte ?
+          - link "Créer un compte" [ref=e23] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/admin/register
+      - generic [ref=e28]:
+        - generic [ref=e32]:
+          - generic [ref=e35]:
+            - generic [ref=e39]:
+              - text: Adresse e-mail
+              - superscript [ref=e40]: "*"
+            - textbox "Adresse e-mail*" [active] [ref=e44]
+          - generic [ref=e47]:
+            - generic [ref=e51]:
+              - text: Mot de passe
+              - superscript [ref=e52]: "*"
+            - generic [ref=e54]:
+              - textbox "Mot de passe*" [ref=e56]
+              - button "Show password" [ref=e59] [cursor=pointer]:
+                - img [ref=e60]
+          - generic [ref=e68]:
+            - checkbox "Se souvenir de moi" [ref=e69]
+            - generic [ref=e70]: Se souvenir de moi
+          - link "Mot de passe oublié ?" [ref=e73] [cursor=pointer]:
+            - /url: http://127.0.0.1:8000/admin/password-reset/request
+        - button "Se connecter" [ref=e79] [cursor=pointer]:
+          - generic [ref=e80]: Se connecter
+  - generic:
+    - status
+```

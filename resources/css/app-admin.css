@@ -1,0 +1,333 @@
+/* ========== GLM Admin – Premium SaaS design system ========== */
+/* Dark navy base, #2563EB accent, 16–20px radius, soft shadows, minimal borders */
+/* Load after app.css (Tailwind) in app layout only */
+
+:root {
+    /* Legacy aliases for components that still reference these (glm-theme.css defines --bg, --surface, etc.) */
+    --radius-card: 1rem;
+    --radius-lg: 1.25rem;
+}
+
+/* Ensure Tailwind utilities can use these in app layout */
+
+/* Layout – app shell uses design tokens (glm-theme.css) */
+.glm-app-sidebar {
+    background: var(--surface-2);
+    width: 16rem;
+    border-right: none;
+    box-shadow: var(--shadow-soft);
+    border-color: var(--border);
+}
+.glm-app-sidebar-nav-item {
+    color: var(--muted);
+    border-radius: var(--radius-card);
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+.glm-app-sidebar-nav-item:hover {
+    color: var(--text);
+    background: var(--surface);
+}
+.glm-app-sidebar-nav-item.active {
+    color: white;
+    background: linear-gradient(135deg, var(--primary-2), var(--primary));
+    box-shadow: var(--shadow-soft);
+}
+/* Topbar: same dark design in light and dark theme (always GLM blue gradient + white UI) */
+.glm-app-topbar {
+    min-height: 4rem;
+}
+.glm-topbar-bg {
+    background: linear-gradient(90deg, var(--glm-primary), var(--glm-primary-2));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.glm-app-main {
+    background: var(--bg);
+    min-height: 100%;
+}
+/* ========== Light mode: contrast rules (light bg → dark text; dark bg → light text) ========== */
+/* Force readable text on light backgrounds – no white/light grey on light bg */
+html:not(.dark) .glm-app-main .text-white,
+html:not(.dark) .glm-app-main [class*="text-white/"] {
+    color: var(--glm-text) !important;
+}
+/* Keep light text inside dark panels (dropdowns, drawers, modals) – add .glm-dark-bg to the panel */
+html:not(.dark) .glm-app-main .glm-dark-bg { color: rgba(255,255,255,0.92); }
+html:not(.dark) .glm-app-main .glm-dark-bg .text-white,
+html:not(.dark) .glm-app-main .glm-dark-bg [class*="text-white/"],
+html:not(.dark) .glm-app-main .glm-dark-bg .text-slate-300,
+html:not(.dark) .glm-app-main .glm-dark-bg .text-slate-400 { color: rgba(255,255,255,0.92) !important; }
+/* Light box inside dark panel (e.g. preview content): keep dark text in light mode */
+html:not(.dark) .glm-app-main .glm-dark-bg .glm-light-bg,
+html:not(.dark) .glm-app-main .glm-dark-bg .glm-light-bg .text-slate-200,
+html:not(.dark) .glm-app-main .glm-dark-bg .glm-light-bg .text-slate-400 { color: var(--glm-text) !important; }
+html:not(.dark) .glm-app-main .text-white\/95 { color: var(--glm-text) !important; }
+html:not(.dark) .glm-app-main .text-white\/90 { color: var(--glm-text) !important; }
+html:not(.dark) .glm-app-main .text-white\/85 { color: var(--glm-text) !important; }
+html:not(.dark) .glm-app-main .text-white\/80 { color: var(--glm-text) !important; }
+html:not(.dark) .glm-app-main .text-white\/70 { color: var(--glm-muted) !important; }
+html:not(.dark) .glm-app-main .text-white\/60 { color: var(--glm-muted) !important; }
+html:not(.dark) .glm-app-main .text-white\/55 { color: var(--glm-muted) !important; }
+html:not(.dark) .glm-app-main .text-white\/50 { color: var(--glm-muted) !important; }
+html:not(.dark) .glm-app-main .text-white\/40 { color: var(--glm-muted) !important; }
+
+/* Light mode: grey text → dark so readable on light bg */
+html:not(.dark) .glm-app-main .text-slate-200,
+html:not(.dark) .glm-app-main .text-slate-300,
+html:not(.dark) .glm-app-main .text-slate-400,
+html:not(.dark) .glm-app-main .text-slate-500 { color: var(--glm-muted) !important; }
+html:not(.dark) .glm-app-main .text-slate-600,
+html:not(.dark) .glm-app-main .text-slate-700,
+html:not(.dark) .glm-app-main .text-gray-400,
+html:not(.dark) .glm-app-main .text-gray-500 { color: var(--glm-text) !important; }
+
+/* Light mode: hover – no white/light text on hover over light bg */
+html:not(.dark) .glm-app-main .hover\:text-white:hover,
+html:not(.dark) .glm-app-main [class*="hover:text-white"]:hover { color: var(--glm-text) !important; }
+html:not(.dark) .glm-app-main .hover\:text-slate-300:hover,
+html:not(.dark) .glm-app-main .hover\:text-slate-400:hover { color: var(--glm-text) !important; }
+/* Primary button: always white text (dark gradient) including hover */
+html:not(.dark) .glm-app-main .glm-btn-primary:hover { color: #fff !important; }
+
+/* Light mode: darker status/feedback colors so readable on light */
+html:not(.dark) .glm-app-main .text-emerald-400,
+html:not(.dark) .glm-app-main .text-emerald-300,
+html:not(.dark) .glm-app-main .text-emerald-200 { color: #166534 !important; }
+html:not(.dark) .glm-app-main .text-amber-400,
+html:not(.dark) .glm-app-main .text-amber-300 { color: #B45309 !important; }
+html:not(.dark) .glm-app-main .text-blue-400,
+html:not(.dark) .glm-app-main .text-blue-300 { color: #1D4ED8 !important; }
+html:not(.dark) .glm-app-main .text-red-400,
+html:not(.dark) .glm-app-main .text-red-300 { color: #B91C1C !important; }
+
+/* Cards – main content area (use glm-card/glm-border tokens) */
+.glm-card {
+    background: var(--glm-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--glm-border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.glm-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-strong);
+}
+.glm-card-static {
+    background: var(--glm-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--glm-border);
+}
+
+/* Buttons */
+.glm-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: white;
+    background: linear-gradient(90deg, var(--glm-primary), var(--glm-primary-2));
+    border: none;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.glm-btn-primary:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-strong);
+}
+.glm-btn-primary:active {
+    transform: translateY(0);
+}
+/* Primary button: always white text (gradient bg) in both themes */
+html:not(.dark) .glm-app-main .glm-btn-primary {
+    color: #fff !important;
+}
+.glm-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+.glm-btn-secondary:hover {
+    background: var(--surface);
+    color: var(--text);
+    transform: translateY(-1px);
+}
+.glm-btn-dark {
+    background: #334155;
+    color: #fff !important;
+    border: none;
+    border-radius: var(--radius-card);
+    transition: filter 0.2s ease, transform 0.15s ease;
+}
+.glm-btn-dark:hover {
+    filter: brightness(1.1);
+    background: #475569;
+}
+
+/* Table container */
+.glm-table-wrap {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+.glm-table-wrap table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.glm-table-wrap thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+}
+.glm-table-wrap th {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+}
+.glm-table-wrap tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s ease;
+}
+.glm-table-wrap tbody tr:hover {
+    background: var(--surface-2);
+}
+.glm-table-wrap td {
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+    color: var(--text);
+}
+
+/* Animations */
+@keyframes glm-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.glm-fade-in {
+    animation: glm-fade-in 0.35s ease-out forwards;
+}
+@keyframes glm-count {
+    from { opacity: 0; transform: translateY(4px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Pagination in app area */
+.glm-table-wrap nav[aria-label="Pagination"] .flex {
+    gap: 0.25rem;
+}
+.glm-table-wrap nav a,
+.glm-table-wrap nav span {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.75rem;
+    transition: background 0.2s, color 0.2s;
+}
+.glm-table-wrap nav a {
+    color: var(--muted);
+    background: transparent;
+}
+.glm-table-wrap nav a:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+.glm-table-wrap nav span[aria-current="page"] {
+    background: color-mix(in srgb, var(--primary) 18%, transparent);
+    color: var(--primary);
+}
+.glm-table-wrap nav .text-gray-500 {
+    color: var(--muted) !important;
+}
+
+/* ========== Approval center – glass stat cards (18px, accent bar, hover lift) ========== */
+.glm-stat-card {
+    background: var(--surface);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.glm-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-strong);
+}
+.glm-stat-card-accent-blue { border-left: 4px solid var(--primary); }
+.glm-stat-card-accent-amber { border-left: 4px solid var(--warning); }
+.glm-stat-card-accent-emerald { border-left: 4px solid var(--success); }
+.glm-stat-card-accent-red { border-left: 4px solid var(--danger); }
+
+/* Status badges – readable in light (darker text) and dark */
+.glm-badge-approved { background: rgba(34, 197, 94, 0.16); color: #166534; }
+.glm-badge-pending { background: rgba(217, 119, 6, 0.18); color: #B45309; }
+.glm-badge-rejected { background: rgba(220, 38, 38, 0.14); color: #B91C1C; }
+.dark .glm-badge-approved { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.dark .glm-badge-pending { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+.dark .glm-badge-rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+.glm-badge-trial { background: rgba(37, 99, 235, 0.18); color: #1d4ed8; }
+.dark .glm-badge-trial { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+
+/* Role badges (platform users) – always white text on colored bg */
+.glm-badge-role-support {
+    background: #475569;
+    color: #fff !important;
+}
+
+/* Theme-aware text (use in app content so light = dark text, dark = light text) */
+.glm-text { color: var(--glm-text); }
+.glm-muted { color: var(--glm-muted); }
+/* Tab nav: inactive + hover use theme text so visible in light mode */
+.glm-tab-inactive { color: var(--glm-muted); }
+.glm-tab-inactive:hover { color: var(--glm-text); }
+
+/* Form inputs – theme-aware (use with rounded-xl px-4 py-2.5 text-sm etc.) */
+.glm-input,
+.glm-select {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+.glm-input::placeholder {
+    color: var(--muted);
+}
+.glm-input:focus,
+.glm-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+/* Side drawer */
+.glm-drawer-backdrop {
+    transition: opacity 0.25s ease;
+}
+.glm-drawer-panel {
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    box-shadow: var(--shadow-strong);
+}
+.glm-drawer-panel.open {
+    transform: translateX(0);
+}

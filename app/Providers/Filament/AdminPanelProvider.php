@@ -35,9 +35,8 @@ class AdminPanelProvider extends PanelProvider
             ->registration(CustomRegister::class)
             ->passwordReset(CustomRequestPasswordReset::class)
             ->brandName('GLM')
-            ->brandLogo(url('images/light-logo.png'))
-            ->darkModeBrandLogo(url('images/dark-logo.png'))
-            ->brandLogoHeight('2rem')
+            ->brandLogo(url('images/dark-logo.png'))
+            ->brandLogoHeight('2.25rem')
             ->favicon(url('images/Icon%20Blue.png'))
             ->colors([
                 'primary' => Color::Blue, // Electric Blue #2563EB (see BRAND_GUIDE.md)

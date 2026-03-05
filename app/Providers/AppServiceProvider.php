@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Http\Responses\AppLoginResponse;
+use App\Http\Responses\Auth\PendingApprovalRegistrationResponse;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
+use Filament\Auth\Http\Responses\Contracts\RegistrationResponse;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,6 +15,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(
+            RegistrationResponse::class,
+            PendingApprovalRegistrationResponse::class
+        );
+
+        $this->app->bind(LoginResponseContract::class, AppLoginResponse::class);
+
         // When the app is deployed with everything in document root (no "public" subfolder),
         // e.g. using index.document_root.php, make public_path() point to base_path() so
         // assets (build/, Filament CSS/JS) load correctly.
@@ -24,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \App\Models\Reservation::observe(\App\Observers\ReservationObserver::class);
+        \App\Models\ReservationPayment::observe(\App\Observers\PaymentObserver::class);
+        \App\Models\Vehicle::observe(\App\Observers\VehicleObserver::class);
+        \App\Models\Expense::observe(\App\Observers\ExpenseObserver::class);
     }
 }
