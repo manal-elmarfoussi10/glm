@@ -2,6 +2,7 @@
 
 namespace App\Filament\Auth;
 
+use App\Models\Plan;
 use Filament\Auth\Pages\Register as BaseRegister;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
@@ -54,7 +55,13 @@ class CustomRegister extends BaseRegister
                     TextInput::make('requested_ice')
                         ->label('ICE')
                         ->required()
-                        ->maxLength(255),
+                        ->string()
+                        ->regex('/^\d+$/', 'L\'ICE doit contenir uniquement des chiffres.')
+                        ->minLength(12)
+                        ->maxLength(20)
+                        ->validationAttribute('ICE')
+                        ->live(onBlur: true)
+                        ->helperText('12 à 20 chiffres.'),
                     TextInput::make('phone')
                         ->label('Téléphone')
                         ->tel()
@@ -66,20 +73,16 @@ class CustomRegister extends BaseRegister
                         ->maxLength(255),
                     Select::make('requested_plan')
                         ->label('Plan choisi')
-                        ->options([
-                            'starter' => 'Starter',
-                            'professional' => 'Professional',
-                            'enterprise' => 'Enterprise',
-                        ])
-                        ->required(),
+                        ->options(fn () => static::activePlansOptions())
+                        ->required()
+                        ->searchable(),
                     TextInput::make('fleet_size')
                         ->label('Taille de la flotte (Nombre de véhicules)')
                         ->numeric()
                         ->required(),
                     TagsInput::make('operating_cities')
                         ->label('Villes d\'opération')
-                        ->placeholder('Ex. Casablanca')
-                        ->helperText('Saisir une ville puis appuyer sur Entrée pour l\'ajouter. Optionnel.'),
+                        ->placeholder('Ex. Casablanca'),
                     Textarea::make('registration_message')
                         ->label('Message / Notes (Optionnel)')
                         ->rows(3),
@@ -93,7 +96,29 @@ class CustomRegister extends BaseRegister
     {
         $data['status'] = 'pending';
         $data['role'] = 'company_admin';
+
+        $planId = $data['requested_plan'] ?? null;
+        if ($planId && is_numeric($planId)) {
+            $plan = Plan::find($planId);
+            $data['requested_plan'] = $plan ? $plan->name : (string) $planId;
+        }
+
         return $data;
+    }
+
+    /** @return array<int|string, string> id => label for active plans */
+    public static function activePlansOptions(): array
+    {
+        $plans = Plan::query()->where('is_active', true)->orderBy('name')->get();
+        $options = [];
+        foreach ($plans as $plan) {
+            $label = $plan->name;
+            if ($plan->monthly_price !== null && $plan->monthly_price !== '') {
+                $label .= ' — ' . $plan->monthly_price . ' MAD/mois';
+            }
+            $options[$plan->id] = $label;
+        }
+        return $options;
     }
 
     public function register(): ?RegistrationResponse

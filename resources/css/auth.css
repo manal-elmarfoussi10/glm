@@ -277,13 +277,21 @@
   padding-right: 0 !important;
 }
 
-/* Password: box comes from wrapper, input has no border; keep input below toggle so eye receives clicks */
+/* Password: box from wrapper; input must not be covered by toggle so typing works */
+.glm-auth-card .fi-fo-field-wrp:has(input[type="password"]) .fi-input-wrp .fi-input-wrp-content-ctn,
+.glm-auth-card .fi-grid-col:has(input[type="password"]) .fi-input-wrp .fi-input-wrp-content-ctn {
+  width: calc(100% - 44px) !important;
+  max-width: calc(100% - 44px) !important;
+  min-width: 0 !important;
+  pointer-events: auto !important;
+}
 .glm-auth-card .fi-fo-field-wrp:has(input[type="password"]) .fi-input-wrp input,
 .glm-auth-card .fi-grid-col:has(input[type="password"]) .fi-input-wrp input {
   background: transparent !important;
   border: none !important;
   position: relative !important;
-  z-index: 0 !important;
+  z-index: 1 !important;
+  pointer-events: auto !important;
 }
 
 .glm-auth-card input[type="email"]::placeholder,

@@ -33,6 +33,7 @@ use App\Http\Controllers\App\Support\SupportSearchController;
 use App\Http\Controllers\App\Support\SupportSubscriptionController;
 use App\Http\Controllers\App\Support\TicketController;
 use App\Http\Controllers\App\Support\UpgradeRequestController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -50,6 +51,18 @@ Route::get('/welcome', function () {
 Route::get('/pending-approval', function () {
     return view('filament.pages.auth.pending-approval');
 })->name('auth.pending-approval');
+
+Route::get('/_test-mail', function () {
+    $to = config('mail.test_to');
+    if (! $to) {
+        return 'Set MAIL_TEST_TO in .env and retry.';
+    }
+    Mail::raw('GLM SMTP test OK ✅', function ($m) use ($to) {
+        $m->to($to)->subject('GLM SMTP Test');
+    });
+
+    return 'Mail sent ✅ check inbox/spam';
+})->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
