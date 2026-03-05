@@ -1,0 +1,12 @@
+# Hostinger: document root is public_html; Laravel must run from public/
+# 1. Rename this file to .htaccess
+# 2. Upload it to public_html/ (the root of your site, same level as the "public" folder)
+# 3. Domain: glm.marfoussiwebart.com
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^glm\.marfoussiwebart\.com$ [NC,OR]
+    RewriteCond %{HTTP_HOST} ^www\.glm\.marfoussiwebart\.com$ [NC]
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ /public/$1 [L]
+</IfModule>

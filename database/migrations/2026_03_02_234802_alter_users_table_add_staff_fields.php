@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('staff'); // super_admin, company_admin, manager, accountant, etc.
+            $table->string('role')->default('staff'); // super_admin, company_admin, manager, etc.
             $table->foreignId('company_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('branch_id')->nullable()->constrained()->nullOnDelete();
             $table->string('status')->default('active'); // active, suspended, invited, archived
-            
+
             $table->string('phone')->nullable();
             $table->string('whatsapp_phone')->nullable();
             $table->string('cin')->nullable();
             $table->json('preferences')->nullable();
-            
+
             $table->timestamp('last_login_at')->nullable();
         });
     }
