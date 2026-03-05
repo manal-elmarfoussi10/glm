@@ -3,6 +3,7 @@ name: Deploy GLM to Hostinger
 on:
   push:
     branches: ["main"]
+  workflow_dispatch:  # allows "Run workflow" from Actions tab
 
 jobs:
   deploy:
