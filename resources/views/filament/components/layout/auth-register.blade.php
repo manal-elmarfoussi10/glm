@@ -15,11 +15,11 @@
         .glm-auth-card .fi-input-wrp-prefix:empty{ display: none !important; }
     </style>
 
-    {{-- Register: single full-width page, one centered card (no 50/50 split) --}}
+    {{-- Register: full-width dark page, single centered card (max-w-5xl) – no left hero --}}
     <div class="glm-auth-register-page fi-body min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 bg-[#0B1220]">
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_START, scopes: $renderHookScopes) }}
 
-        <div class="w-full max-w-[min(860px,100%)] glm-fade-in">
+        <div class="w-full max-w-5xl glm-fade-in">
             {{ $slot }}
         </div>
 

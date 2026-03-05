@@ -397,25 +397,37 @@
 }
 
 /* =========================
-   Register page only: wider form + label & input on same line
+   Register page: 2-col grid, full-width inputs, h-12 rounded-xl
    ========================= */
-/* Form and grid use full width so columns aren't collapsed */
 .glm-register-card .fi-simple-page-form,
 .glm-register-card .fi-simple-page-form > div,
-.glm-register-card [class*="fi-grid"],
-.glm-register-card form [class*="grid"] {
+.glm-register-card [class*="fi-grid"] {
   width: 100% !important;
   min-width: 0 !important;
+  box-sizing: border-box !important;
 }
 
+/* 2 columns on desktop; 1 on mobile (Filament grid + our gap) */
+.glm-register-card .fi-simple-page-form > div,
+.glm-register-card [class*="fi-grid"] {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 1.25rem !important;
+}
+@media (min-width: 768px) {
+  .glm-register-card .fi-simple-page-form > div,
+  .glm-register-card [class*="fi-grid"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Each field: label on top, input below (vertical stack) */
 .glm-register-card .fi-fo-field-wrp,
 .glm-register-card .fi-grid-col {
   display: flex !important;
-  flex-direction: row !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  gap: 10px 16px !important;
-  row-gap: 6px !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 4px !important;
   min-width: 0 !important;
   width: 100% !important;
 }
@@ -423,76 +435,93 @@
 .glm-register-card .fi-fo-field-wrp-label,
 .glm-register-card .fi-fo-field-wrp > label,
 .glm-register-card .fi-grid-col > label {
-  flex: 0 0 auto !important;
-  min-width: 160px !important;
-  max-width: 42% !important;
   margin-bottom: 0 !important;
-  margin-right: 0 !important;
 }
 
-/* Input wrapper must fill remaining space and never collapse to a sliver */
 .glm-register-card .fi-fo-field-wrp .fi-input-wrp,
 .glm-register-card .fi-grid-col .fi-input-wrp {
-  flex: 1 1 0% !important;
-  min-width: 140px !important;
   width: 100% !important;
-  max-width: 100% !important;
-}
-
-/* Force inner content and input to fill the wrapper (register) */
-.glm-register-card .fi-input-wrp .fi-input-wrp-content-ctn,
-.glm-register-card .fi-input-wrp [class*="fi-input-wrp-content"],
-.glm-register-card .fi-input-wrp .fi-input,
-.glm-register-card .fi-input-wrp input {
-  flex: 1 1 0% !important;
   min-width: 0 !important;
-  width: 100% !important;
-  max-width: 100% !important;
+}
+
+/* Inputs: h-12, px-4, rounded-xl, same vibe as login */
+.glm-register-card .fi-input-wrp,
+.glm-register-card .fi-fo-field-wrp:has(input):not(:has(input[type="checkbox"])) .fi-input-wrp,
+.glm-register-card .fi-fo-field-wrp:has(select) .fi-input-wrp,
+.glm-register-card .fi-fo-field-wrp:has(textarea) .fi-input-wrp {
+  height: 48px !important;
+  min-height: 48px !important;
+  padding: 0 1rem !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  border-radius: 12px !important;
   box-sizing: border-box !important;
 }
-
-/* Errors and hints full width below the row */
-.glm-register-card .fi-fo-field-wrp-error,
-.glm-register-card .fi-fo-field-wrp-hint,
-.glm-register-card .fi-fo-field-wrp-helper-text,
-.glm-register-card .fi-grid-col .fi-fo-field-wrp-error,
-.glm-register-card .fi-grid-col .fi-fo-field-wrp-hint {
-  flex-basis: 100% !important;
-  margin-left: 0 !important;
-  padding-left: 0 !important;
+.glm-register-card .fi-fo-field-wrp:has(textarea) .fi-input-wrp {
+  height: auto !important;
+  min-height: 80px !important;
+  align-items: flex-start !important;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+.glm-register-card .fi-input-wrp:focus-within {
+  border-color: rgba(255,255,255,0.2) !important;
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.35) !important;
 }
 
-/* Force full-width inputs on register: any wrapper or field container (Filament class names can vary) */
-.glm-register-card [class*="fi-fo-field"],
-.glm-register-card [class*="fi-grid-col"],
-.glm-register-card .fi-simple-page-form > div,
-.glm-register-card .fi-simple-page-form > div > div {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;
-  box-sizing: border-box !important;
-}
-
-.glm-register-card [class*="fi-input-wrp"] {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 200px !important;
-  flex: 1 1 0% !important;
-  display: flex !important;
-  box-sizing: border-box !important;
-}
-
-/* Any input inside register card must fill its container */
 .glm-register-card input[type="text"],
 .glm-register-card input[type="email"],
 .glm-register-card input[type="password"],
 .glm-register-card input[type="number"],
-.glm-register-card input:not([type="checkbox"]):not([type="radio"]),
-.glm-register-card .fi-input-wrp input,
-.glm-register-card [class*="fi-input-wrp"] input {
+.glm-register-card .fi-input-wrp input {
   width: 100% !important;
   min-width: 0 !important;
-  max-width: 100% !important;
+  height: 46px !important;
+  padding: 0 0.5rem !important;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 10px !important;
   box-sizing: border-box !important;
-  flex: 1 1 0% !important;
+  color: #fff !important;
+}
+.glm-register-card .fi-input-wrp:has(input[type="password"]) .fi-input-wrp-content-ctn {
+  width: calc(100% - 44px) !important;
+  max-width: calc(100% - 44px) !important;
+  pointer-events: auto !important;
+}
+.glm-register-card .fi-input-wrp:has(input[type="password"]) input {
+  pointer-events: auto !important;
+  z-index: 1 !important;
+}
+.glm-register-card textarea {
+  width: 100% !important;
+  min-height: 72px !important;
+  padding: 0.5rem !important;
+  border: none !important;
+  background: transparent !important;
+  color: #fff !important;
+  resize: vertical !important;
+}
+
+/* Full-width span for cities + message + submit (Filament columnSpanFull + glm-span-full) */
+.glm-register-card .glm-span-full,
+.glm-register-card [class*="fi-grid"] [style*="grid-column: 1"],
+.glm-register-card .fi-sc-actions,
+.glm-register-card .fi-ac {
+  grid-column: 1 / -1 !important;
+}
+.glm-register-card .fi-sc-actions,
+.glm-register-card .fi-ac {
+  margin-top: 0.25rem !important;
+}
+.glm-register-card button[type="submit"] {
+  width: 100% !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+}
+
+/* Errors/hints below field */
+.glm-register-card .fi-fo-field-wrp-error,
+.glm-register-card .fi-fo-field-wrp-helper-text {
+  margin-top: 2px !important;
 }

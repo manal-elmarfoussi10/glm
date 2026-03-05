@@ -37,11 +37,7 @@ class CustomLogin extends BaseLogin
             return 'Veuillez confirmer votre identité pour continuer.';
         }
 
-        if (! filament()->hasRegistration()) {
-            return null;
-        }
-
-        return new HtmlString('Pas encore de compte ? ' . $this->registerAction->toHtml());
+        return new HtmlString('Pas encore de compte ? <a href="' . e(route('register.show')) . '" class="text-blue-400 hover:text-blue-300 font-medium">Créer un compte</a>');
     }
 
     protected function getEmailFormComponent(): Component

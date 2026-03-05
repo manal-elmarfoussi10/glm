@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\CustomLogin;
-use App\Filament\Auth\CustomRegister;
 use App\Filament\Auth\CustomRequestPasswordReset;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -32,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login(CustomLogin::class)
-            ->registration(CustomRegister::class)
+            ->registration(false)
             ->passwordReset(CustomRequestPasswordReset::class)
             ->brandName('GLM')
             ->brandLogo(url('images/dark-logo.png'))

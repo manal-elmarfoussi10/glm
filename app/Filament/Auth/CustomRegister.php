@@ -45,11 +45,16 @@ class CustomRegister extends BaseRegister
     {
         return $schema
             ->components([
-                Grid::make(1)->schema([
+                Grid::make(2)->schema([
                     $this->getNameFormComponent(),
                     $this->getEmailFormComponent(),
                     TextInput::make('requested_company_name')
                         ->label('Nom de l\'entreprise')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('phone')
+                        ->label('Téléphone')
+                        ->tel()
                         ->required()
                         ->maxLength(255),
                     TextInput::make('requested_ice')
@@ -62,11 +67,6 @@ class CustomRegister extends BaseRegister
                         ->validationAttribute('ICE')
                         ->live(onBlur: true)
                         ->helperText('12 à 20 chiffres.'),
-                    TextInput::make('phone')
-                        ->label('Téléphone')
-                        ->tel()
-                        ->required()
-                        ->maxLength(255),
                     TextInput::make('requested_country')
                         ->label('Pays')
                         ->required()
@@ -82,10 +82,14 @@ class CustomRegister extends BaseRegister
                         ->required(),
                     TagsInput::make('operating_cities')
                         ->label('Villes d\'opération')
-                        ->placeholder('Ex. Casablanca'),
+                        ->placeholder('Ex. Casablanca')
+                        ->columnSpanFull()
+                        ->extraAttributes(['class' => 'glm-span-full']),
                     Textarea::make('registration_message')
                         ->label('Message / Notes (Optionnel)')
-                        ->rows(3),
+                        ->rows(3)
+                        ->columnSpanFull()
+                        ->extraAttributes(['class' => 'glm-span-full']),
                     $this->getPasswordFormComponent(),
                     $this->getPasswordConfirmationFormComponent(),
                 ]),
@@ -109,7 +113,7 @@ class CustomRegister extends BaseRegister
     /** @return array<int|string, string> id => label for active plans */
     public static function activePlansOptions(): array
     {
-        $plans = Plan::query()->where('is_active', true)->orderBy('name')->get();
+        $plans = Plan::query()->where('is_active', true)->orderBy('monthly_price')->orderBy('name')->get();
         $options = [];
         foreach ($plans as $plan) {
             $label = $plan->name;

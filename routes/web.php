@@ -44,6 +44,13 @@ Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login');
 
+Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'show'])->name('register.show');
+Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'store'])->name('register.store');
+
+Route::get('/admin/register', function () {
+    return redirect()->route('register.show');
+})->name('filament.admin.auth.register');
+
 Route::get('/welcome', function () {
     return view('welcome');
 });
@@ -53,16 +60,23 @@ Route::get('/pending-approval', function () {
 })->name('auth.pending-approval');
 
 Route::get('/_test-mail', function () {
-    $to = config('mail.test_to');
+    $to = config('mail.test_to') ?: config('mail.from.address');
     if (! $to) {
-        return 'Set MAIL_TEST_TO in .env and retry.';
+        return response('Error: Set MAIL_TEST_TO or MAIL_FROM_ADDRESS in .env', 400);
     }
-    Mail::raw('GLM SMTP test OK ✅', function ($m) use ($to) {
-        $m->to($to)->subject('GLM SMTP Test');
-    });
-
-    return 'Mail sent ✅ check inbox/spam';
-})->middleware('auth');
+    try {
+        Mail::raw('GLM SMTP test OK ✅', function ($m) use ($to) {
+            $m->to($to)->subject('GLM SMTP Test');
+        });
+        return response('OK: mail sent to ' . $to . '. Check inbox/spam.', 200);
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error('Test mail failed', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+        $message = app()->environment('production')
+            ? 'Error: mail could not be sent.'
+            : 'Error: ' . $e->getMessage();
+        return response($message, 500);
+    }
+})->withoutMiddleware(['auth']);
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +86,25 @@ Route::get('/_test-mail', function () {
 Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/', fn () => redirect()->route('app.dashboard'));
+
+    Route::get('/test-mail', function () {
+        $to = config('mail.test_to') ?: config('mail.from.address');
+        if (! $to) {
+            return response('Error: Set MAIL_TEST_TO or MAIL_FROM_ADDRESS in .env', 400);
+        }
+        try {
+            Mail::raw('GLM SMTP test OK ✅ (from authenticated user)', function ($m) use ($to) {
+                $m->to($to)->subject('GLM SMTP Test');
+            });
+            return response('OK: mail sent to ' . $to . '. Check inbox/spam.', 200);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Test mail failed', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            $message = app()->environment('production')
+                ? 'Error: mail could not be sent.'
+                : 'Error: ' . $e->getMessage();
+            return response($message, 500);
+        }
+    })->name('test-mail');
 
     // Platform only: demandes d'inscription
     Route::middleware('platform_staff')->group(function () {
