@@ -18,8 +18,8 @@ return new class extends Migration
             $table->decimal('price_min', 10, 2)->nullable();
             $table->decimal('price_max', 10, 2)->nullable();
             $table->timestamps();
-            $table->unique(['company_id', 'branch_id', 'category', 'date']);
-            $table->index(['branch_id', 'category', 'date']);
+            $table->unique(['company_id', 'branch_id', 'category', 'date'], 'pac_company_branch_cat_date');
+            $table->index(['branch_id', 'category', 'date'], 'pac_branch_cat_date');
         });
     }
 
