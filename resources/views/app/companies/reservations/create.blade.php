@@ -307,7 +307,7 @@ Nouvelle réservation – {{ $company->name }}
                 </div>
                 <div><label for="new_client_address" class="mb-1 block text-sm font-medium text-slate-300">Adresse</label><input type="text" id="new_client_address" x-model="newClientAddress" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="Adresse"></div>
                 <div><label for="new_client_phone" class="mb-1 block text-sm font-medium text-slate-300">Téléphone</label><input type="text" id="new_client_phone" x-model="newClientPhone" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="+212 6..."></div>
-                <div><label for="new_client_email" class="mb-1 block text-sm font-medium text-slate-300">Email</label><input type="email" id="new_client_email" x-model="newClientEmail" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="email@exemple.ma"></div>
+                <div><label for="new_client_email" class="mb-1 block text-sm font-medium text-slate-300">Email</label><input type="email" id="new_client_email" x-model="newClientEmail" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="email@@exemple.ma"></div>
                 <p x-show="addClientError" x-text="addClientError" class="text-sm text-red-400"></p>
                 <div class="flex gap-3 justify-end pt-2">
                     <button type="button" @click="showAddClientModal = false; addClientError = ''" class="glm-btn-secondary">Annuler</button>
