@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Contracts\DocumentExtractorInterface;
 use App\Http\Responses\AppLoginResponse;
 use App\Http\Responses\Auth\PendingApprovalRegistrationResponse;
+use App\Services\DocumentExtractionService;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
 use Filament\Auth\Http\Responses\Contracts\RegistrationResponse;
 use Illuminate\Support\ServiceProvider;
@@ -21,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(LoginResponseContract::class, AppLoginResponse::class);
+        $this->app->bind(DocumentExtractorInterface::class, DocumentExtractionService::class);
 
         // When the app is deployed with everything in document root (no "public" subfolder),
         // e.g. using index.document_root.php, make public_path() point to base_path() so

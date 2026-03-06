@@ -119,9 +119,14 @@
     {{-- Tab: Vehicle --}}
     <div x-show="tab === 'vehicle'" x-cloak class="glm-card-static p-6">
         <h2 class="text-lg font-semibold text-white mb-4">Véhicule</h2>
-        @if ($r->vehicle->image_path)
-            <div class="mb-4">
-                <img src="{{ asset('storage/' . $r->vehicle->image_path) }}" alt="{{ $r->vehicle->plate }}" class="rounded-xl border border-white/10 object-cover max-h-56 w-full">
+        @if ($r->vehicle->image_url)
+            <div class="mb-4 rounded-xl border border-white/10 overflow-hidden bg-white/5 max-h-56 flex items-center justify-center">
+                <img src="{{ $r->vehicle->image_url }}" alt="{{ $r->vehicle->plate }}" class="w-full object-cover max-h-56" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="p-8 text-slate-500 hidden" style="display:none"><svg class="h-16 w-16 mx-auto opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg><p class="text-sm mt-2">Photo non disponible</p></div>
+            </div>
+        @else
+            <div class="mb-4 rounded-xl border border-white/10 bg-white/5 p-8 flex items-center justify-center text-slate-500">
+                <div><svg class="h-16 w-16 mx-auto opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg><p class="text-sm mt-2">Aucune photo</p></div>
             </div>
         @endif
         <dl class="grid gap-4 sm:grid-cols-2">
@@ -176,7 +181,7 @@
                                     <td class="px-4 py-3 text-slate-300">{{ $paymentMethods[$p->method] ?? $p->method }}</td>
                                     <td class="px-4 py-3 text-slate-400">{{ $p->reference ?? '–' }}</td>
                                     <td class="px-4 py-3 text-right font-medium {{ $p->isRefund() ? 'text-emerald-400' : 'text-white' }}">{{ $p->isRefund() ? '-' : '' }}{{ number_format($p->amount, 2, ',', ' ') }} MAD</td>
-                                    <td class="px-4 py-3">@if($p->receipt_path)<a href="{{ asset('storage/' . $p->receipt_path) }}" target="_blank" class="text-[#93C5FD] hover:underline">Voir</a>@else – @endif</td>
+                                    <td class="px-4 py-3">@if($p->receipt_path)<a href="{{ storage_public_url($p->receipt_path) }}" target="_blank" class="text-[#93C5FD] hover:underline">Voir</a>@else – @endif</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -376,8 +381,9 @@
                         <div class="sm:col-span-2"><dt class="text-slate-500">Photos</dt>
                             <dd class="mt-2 flex flex-wrap gap-2">
                                 @foreach ($inspectionOut->photos as $ph)
+                                    @php $phUrl = storage_public_url($ph->path); @endphp
                                     <div class="relative group">
-                                        <a href="{{ asset('storage/' . $ph->path) }}" target="_blank" class="block"><img src="{{ asset('storage/' . $ph->path) }}" alt="" class="h-20 w-20 object-cover rounded-lg border border-white/10"></a>
+                                        @if($phUrl)<a href="{{ $phUrl }}" target="_blank" class="block"><img src="{{ $phUrl }}" alt="" class="h-20 w-20 object-cover rounded-lg border border-white/10" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex');"><span class="hidden h-20 w-20 rounded-lg border border-white/10 bg-white/5 items-center justify-center text-slate-500 text-xs" style="display:none">–</span></a>@else<span class="h-20 w-20 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-500 text-xs">–</span>@endif
                                         <form action="{{ route('app.companies.reservations.inspection-photos.destroy', [$company, $r, $ph]) }}" method="post" class="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition">@csrf @method('DELETE')<button type="submit" class="rounded bg-red-500/90 text-white p-0.5" title="Supprimer">×</button></form>
                                     </div>
                                 @endforeach
@@ -449,8 +455,9 @@
                         <div class="sm:col-span-2"><dt class="text-slate-500">Photos</dt>
                             <dd class="mt-2 flex flex-wrap gap-2">
                                 @foreach ($inspectionIn->photos as $ph)
+                                    @php $phUrl = storage_public_url($ph->path); @endphp
                                     <div class="relative group">
-                                        <a href="{{ asset('storage/' . $ph->path) }}" target="_blank" class="block"><img src="{{ asset('storage/' . $ph->path) }}" alt="" class="h-20 w-20 object-cover rounded-lg border border-white/10"></a>
+                                        @if($phUrl)<a href="{{ $phUrl }}" target="_blank" class="block"><img src="{{ $phUrl }}" alt="" class="h-20 w-20 object-cover rounded-lg border border-white/10" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex');"><span class="hidden h-20 w-20 rounded-lg border border-white/10 bg-white/5 items-center justify-center text-slate-500 text-xs" style="display:none">–</span></a>@else<span class="h-20 w-20 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center text-slate-500 text-xs">–</span>@endif
                                         <form action="{{ route('app.companies.reservations.inspection-photos.destroy', [$company, $r, $ph]) }}" method="post" class="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition">@csrf @method('DELETE')<button type="submit" class="rounded bg-red-500/90 text-white p-0.5" title="Supprimer">×</button></form>
                                     </div>
                                 @endforeach

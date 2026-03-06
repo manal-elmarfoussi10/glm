@@ -5,7 +5,7 @@ Nouveau client – {{ $company->name }}
 @endsection
 
 @section('content')
-<div class="space-y-8 glm-fade-in">
+<div class="space-y-8 glm-fade-in" x-data="customerCreateWithExtraction('{{ route('app.companies.customers.extract-documents', $company) }}')">
     <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <a href="{{ route('app.companies.customers.index', $company) }}" class="text-sm font-medium text-slate-400 hover:text-white mb-2 inline-block no-underline">← Clients · {{ $company->name }}</a>
@@ -14,7 +14,101 @@ Nouveau client – {{ $company->name }}
         </div>
     </header>
 
-    <form action="{{ route('app.companies.customers.store', $company) }}" method="post" enctype="multipart/form-data" class="space-y-6">
+    {{-- Upload CIN / Permis (extraction) --}}
+    <div class="glm-card-static p-6">
+        <h2 class="text-lg font-semibold text-white mb-2">Documents (extraction optionnelle)</h2>
+        <p class="text-sm text-slate-400 mb-4">Uploadez CIN ou permis pour pré-remplir le formulaire. Les fichiers sont analysés localement et stockés de façon privée.</p>
+        <div class="grid gap-4 sm:grid-cols-3">
+            <div
+                class="relative rounded-xl border-2 border-dashed transition-colors"
+                :class="uploadState.cin_front ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/20 hover:border-white/40'"
+                @dragover.prevent="dragOver($event, 'cin_front')"
+                @dragleave.prevent="dragLeave($event, 'cin_front')"
+                @drop.prevent="drop($event, 'cin_front')"
+            >
+                <input type="file" class="absolute inset-0 z-10 cursor-pointer opacity-0" accept=".pdf,.jpg,.jpeg,.png" @change="uploadFile($event.target, 'cin_front')" :disabled="uploading">
+                <div class="flex flex-col items-center justify-center gap-2 p-6 text-center min-h-[120px]">
+                    <template x-if="uploadState.cin_front">
+                        <div class="flex items-center gap-2 text-emerald-400 text-sm">
+                            <span x-text="uploadState.cin_front.name"></span>
+                            <span class="text-slate-500">· Analysé</span>
+                        </div>
+                    </template>
+                    <template x-if="!uploadState.cin_front">
+                        <span class="text-sm text-slate-400">CIN recto · Déposez ou cliquez</span>
+                    </template>
+                </div>
+            </div>
+            <div
+                class="relative rounded-xl border-2 border-dashed transition-colors"
+                :class="uploadState.cin_back ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/20 hover:border-white/40'"
+                @dragover.prevent="dragOver($event, 'cin_back')"
+                @dragleave.prevent="dragLeave($event, 'cin_back')"
+                @drop.prevent="drop($event, 'cin_back')"
+            >
+                <input type="file" class="absolute inset-0 z-10 cursor-pointer opacity-0" accept=".pdf,.jpg,.jpeg,.png" @change="uploadFile($event.target, 'cin_back')" :disabled="uploading">
+                <div class="flex flex-col items-center justify-center gap-2 p-6 text-center min-h-[120px]">
+                    <template x-if="uploadState.cin_back">
+                        <div class="flex items-center gap-2 text-emerald-400 text-sm">
+                            <span x-text="uploadState.cin_back.name"></span>
+                            <span class="text-slate-500">· Analysé</span>
+                        </div>
+                    </template>
+                    <template x-if="!uploadState.cin_back">
+                        <span class="text-sm text-slate-400">CIN verso · Déposez ou cliquez</span>
+                    </template>
+                </div>
+            </div>
+            <div
+                class="relative rounded-xl border-2 border-dashed transition-colors"
+                :class="uploadState.license ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-white/20 hover:border-white/40'"
+                @dragover.prevent="dragOver($event, 'license')"
+                @dragleave.prevent="dragLeave($event, 'license')"
+                @drop.prevent="drop($event, 'license')"
+            >
+                <input type="file" class="absolute inset-0 z-10 cursor-pointer opacity-0" accept=".pdf,.jpg,.jpeg,.png" @change="uploadFile($event.target, 'license')" :disabled="uploading">
+                <div class="flex flex-col items-center justify-center gap-2 p-6 text-center min-h-[120px]">
+                    <template x-if="uploadState.license">
+                        <div class="flex items-center gap-2 text-emerald-400 text-sm">
+                            <span x-text="uploadState.license.name"></span>
+                            <span class="text-slate-500">· Analysé</span>
+                        </div>
+                    </template>
+                    <template x-if="!uploadState.license">
+                        <span class="text-sm text-slate-400">Permis · Déposez ou cliquez</span>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <p x-show="uploading" class="mt-2 text-sm text-slate-400">Extraction en cours…</p>
+        <p x-show="uploadError" class="mt-2 text-sm text-red-400" x-text="uploadError"></p>
+    </div>
+
+    {{-- Données détectées + Pré-remplir --}}
+    <div x-show="hasMergedData()" x-cloak class="glm-card-static p-6 border border-[#2563EB]/30 bg-[#2563EB]/5">
+        <h2 class="text-lg font-semibold text-white mb-3">Données détectées</h2>
+        <p class="text-sm text-slate-400 mb-4">Vérifiez et corrigez si besoin, puis pré-remplissez le formulaire.</p>
+        <dl class="grid gap-2 sm:grid-cols-2 text-sm mb-4">
+            <template x-if="merged.name">
+                <div><dt class="text-slate-500">Nom</dt><dd class="text-white font-medium" x-text="merged.name"></dd></div>
+            </template>
+            <template x-if="merged.cin">
+                <div><dt class="text-slate-500">CIN</dt><dd class="text-white font-medium" x-text="merged.cin"></dd></div>
+            </template>
+            <template x-if="merged.address">
+                <div class="sm:col-span-2"><dt class="text-slate-500">Adresse</dt><dd class="text-white" x-text="merged.address"></dd></div>
+            </template>
+            <template x-if="merged.driving_license_number">
+                <div><dt class="text-slate-500">N° permis</dt><dd class="text-white font-medium" x-text="merged.driving_license_number"></dd></div>
+            </template>
+            <template x-if="merged.driving_license_expiry">
+                <div><dt class="text-slate-500">Expiration permis</dt><dd class="text-white font-medium" x-text="merged.driving_license_expiry"></dd></div>
+            </template>
+        </dl>
+        <button type="button" @click="prefillForm()" class="glm-btn-primary">Pré-remplir le formulaire</button>
+    </div>
+
+    <form action="{{ route('app.companies.customers.store', $company) }}" method="post" enctype="multipart/form-data" class="space-y-6" id="customer-form">
         @csrf
         <div class="glm-card-static p-6">
             <h2 class="text-lg font-semibold text-white mb-4">Identité</h2>
@@ -100,4 +194,78 @@ Nouveau client – {{ $company->name }}
         </div>
     </form>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('alpine:init', function () {
+    Alpine.data('customerCreateWithExtraction', function (extractUrl) {
+        return {
+            extractUrl: extractUrl,
+            uploadState: { cin_front: null, cin_back: null, license: null },
+            merged: {},
+            uploading: false,
+            uploadError: null,
+
+            dragOver(e, type) { e.currentTarget.classList.add('border-[#2563EB]/50'); },
+            dragLeave(e, type) { if (e && e.currentTarget) e.currentTarget.classList.remove('border-[#2563EB]/50'); },
+
+            drop(e, type) {
+                e.currentTarget.classList.remove('border-[#2563EB]/50');
+                var f = e.dataTransfer?.files?.[0];
+                if (f) this.doUpload(f, type);
+            },
+
+            uploadFile(input, type) {
+                var f = input?.files?.[0];
+                if (f) this.doUpload(f, type);
+                input.value = '';
+            },
+
+            doUpload(file, type) {
+                var self = this;
+                self.uploadError = null;
+                self.uploading = true;
+                var fd = new FormData();
+                fd.append('file', file);
+                fd.append('type', type);
+                fd.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+
+                fetch(self.extractUrl, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+                    .then(function (r) {
+                        if (!r.ok) throw new Error('Erreur lors de l\'extraction');
+                        return r.json();
+                    })
+                    .then(function (data) {
+                        self.uploadState[type] = { name: data.filename || file.name };
+                        self.merged = data.merged || {};
+                        self.uploading = false;
+                    })
+                    .catch(function (err) {
+                        self.uploadError = err.message || 'Erreur réseau';
+                        self.uploading = false;
+                    });
+            },
+
+            hasMergedData() {
+                var m = this.merged;
+                return !!(m.name || m.cin || m.address || m.driving_license_number || m.driving_license_expiry);
+            },
+
+            prefillForm() {
+                var m = this.merged;
+                var set = function (id, val) {
+                    var el = document.getElementById(id);
+                    if (el && val != null && val !== '') el.value = val;
+                };
+                set('name', m.name);
+                set('cin', m.cin);
+                set('address', m.address);
+                set('driving_license_number', m.driving_license_number);
+                set('driving_license_expiry', m.driving_license_expiry);
+            }
+        };
+    });
+});
+</script>
+@endpush
 @endsection

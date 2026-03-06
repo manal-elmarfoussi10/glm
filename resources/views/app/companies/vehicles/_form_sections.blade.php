@@ -8,9 +8,10 @@
 <div id="section-photo" class="glm-card-static p-6">
     <h2 class="text-lg font-semibold text-white mb-4">Photo du véhicule</h2>
     <div class="flex flex-wrap items-start gap-6">
-        @if ($v && $v->image_path)
+        @if ($v && $v->image_url)
             <div class="shrink-0">
-                <img src="{{ asset('storage/' . $v->image_path) }}" alt="{{ $v->plate }}" class="h-40 w-auto rounded-xl border border-white/10 object-cover">
+                <img src="{{ $v->image_url }}" alt="{{ $v->plate }}" class="h-40 w-auto rounded-xl border border-white/10 object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                <div class="h-40 w-40 rounded-xl border border-white/10 bg-white/5 flex items-center justify-center text-slate-500" style="display:none"><svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
                 <p class="mt-1 text-xs text-slate-500">Photo actuelle</p>
             </div>
         @endif

@@ -288,17 +288,15 @@ class Vehicle extends Model
     public function storeDocument(string $field, UploadedFile $file): string
     {
         $path = $file->store('vehicles/' . $this->id, 'public');
-        $this->update([$field => $path]);
-        return $path;
+        $normalized = normalize_storage_path($path) ?? $path;
+        $this->update([$field => $normalized]);
+        return $normalized;
     }
 
-    /** Public URL for the vehicle photo (for use in views). */
+    /** Public URL for the vehicle photo (for use in views). Uses central helper. */
     public function getImageUrlAttribute(): ?string
     {
-        if (! $this->image_path) {
-            return null;
-        }
-        return asset('storage/' . $this->image_path);
+        return storage_public_url($this->image_path);
     }
 
     /** Completion sections for "quick create" flow: key => label. */

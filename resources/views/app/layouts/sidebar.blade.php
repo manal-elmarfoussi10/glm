@@ -92,8 +92,9 @@
     <div class="h-full flex flex-col min-h-0">
     {{-- Header --}}
     <div class="relative shrink-0 px-4 py-3 border-b border-white/10">
-        <a href="{{ route('app.dashboard') }}" class="flex items-center justify-center">
-            <img src="{{ url('images/light-logo.png') }}" alt="GLM" class="h-10 w-auto object-contain" />
+        <a href="{{ route('app.dashboard') }}" class="flex items-center justify-center min-h-[2.5rem] focus:outline-none focus:ring-2 focus:ring-white/30 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-lg" aria-label="Retour au tableau de bord">
+            <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-10 w-auto object-contain max-w-[180px]" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');" />
+            <span class="hidden text-lg font-bold text-white tracking-tight" aria-hidden="true">GLM</span>
         </a>
         <button
             type="button"

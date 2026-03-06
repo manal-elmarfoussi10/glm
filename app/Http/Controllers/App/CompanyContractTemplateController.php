@@ -25,6 +25,25 @@ class CompanyContractTemplateController extends Controller
         ]);
     }
 
+    /**
+     * Preview a global template (read-only) before duplicating.
+     */
+    public function previewGlobal(Company $company, ContractTemplate $contractTemplate): View
+    {
+        if (! $contractTemplate->isGlobal()) {
+            abort(404);
+        }
+
+        $previewHtml = $contractTemplate->contentForPreview();
+
+        return view('app.companies.contract-templates.preview-global', [
+            'title' => 'Aperçu – ' . $contractTemplate->name,
+            'company' => $company,
+            'template' => $contractTemplate,
+            'previewHtml' => $previewHtml,
+        ]);
+    }
+
     public function create(Request $request, Company $company): View
     {
         $fromGlobalId = $request->query('from_global');

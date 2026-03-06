@@ -55,7 +55,7 @@
 
             <div class="relative z-10 flex items-center gap-4 glm-fade-in">
                 <a href="{{ filament()->getUrl() }}" class="flex items-center gap-4">
-                    <img src="{{ url('/images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" />
+                    <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" />
                 </a>
             </div>
 

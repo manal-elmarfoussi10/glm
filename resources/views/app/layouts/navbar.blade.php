@@ -17,8 +17,13 @@
 
     $profileUrl  = route('app.profile.show');
     $settingsUrl = route('app.profile.settings');
-    $notificationUnreadCount = auth()->user()->unreadNotifications()->count();
-    $notificationsUrl = route('app.notifications.index');
+    try {
+        $notificationUnreadCount = auth()->user()->unreadNotifications()->count();
+        $notificationsUrl = route('app.notifications.index');
+    } catch (\Throwable $e) {
+        $notificationUnreadCount = 0;
+        $notificationsUrl = '#';
+    }
 @endphp
 
 <header class="sticky top-0 z-30 px-4 sm:px-6 pt-4" x-data="{ 

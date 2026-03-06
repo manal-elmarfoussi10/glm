@@ -16,7 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ?? 'Tableau de bord' }} – {{ config('app.name', 'GLM') }}</title>
-    <link rel="icon" href="{{ url('images/Icon%20Blue.png') }}">
+    <link rel="icon" href="{{ app_asset('images/Icon%20Blue.png') }}">
     @vite(['resources/css/app.css', 'resources/css/app-admin.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
@@ -49,6 +49,8 @@
             </main>
         </div>
     </div>
+
+    @include('app.layouts.partials.support-widget')
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>[x-cloak]{display:none!important}</style>

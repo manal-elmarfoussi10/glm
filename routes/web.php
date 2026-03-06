@@ -33,6 +33,7 @@ use App\Http\Controllers\App\Support\SupportSearchController;
 use App\Http\Controllers\App\Support\SupportSubscriptionController;
 use App\Http\Controllers\App\Support\TicketController;
 use App\Http\Controllers\App\Support\UpgradeRequestController;
+use App\Http\Controllers\App\SupportTicketController;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -180,8 +181,10 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
         Route::get('/companies/{company}/customers', [CompanyCustomerController::class, 'index'])->name('companies.customers.index');
         Route::get('/companies/{company}/customers/lookup-by-cin', [CompanyCustomerController::class, 'lookupByCin'])->name('companies.customers.lookup-by-cin');
     Route::get('/companies/{company}/customers/create', [CompanyCustomerController::class, 'create'])->name('companies.customers.create');
+        Route::post('/companies/{company}/customers/extract-documents', [CompanyCustomerController::class, 'extractDocuments'])->name('companies.customers.extract-documents');
         Route::post('/companies/{company}/customers', [CompanyCustomerController::class, 'store'])->name('companies.customers.store');
         Route::get('/companies/{company}/customers/{customer}', [CompanyCustomerController::class, 'show'])->name('companies.customers.show');
+        Route::get('/companies/{company}/customers/{customer}/documents/{type}', [CompanyCustomerController::class, 'downloadDocument'])->name('companies.customers.documents.download');
         Route::get('/companies/{company}/customers/{customer}/edit', [CompanyCustomerController::class, 'edit'])->name('companies.customers.edit');
         Route::put('/companies/{company}/customers/{customer}', [CompanyCustomerController::class, 'update'])->name('companies.customers.update');
         Route::delete('/companies/{company}/customers/{customer}', [CompanyCustomerController::class, 'destroy'])->name('companies.customers.destroy');
@@ -383,10 +386,11 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
         return redirect()->route('app.dashboard')->with('info', 'Sélectionnez une entreprise.');
     })->name('upgrade.redirect');
 
-// Support page for company users (admin / agent) – contact support
-    Route::get('/support', function () {
-        return view('app.support.index', ['title' => 'Support']);
-    })->name('support.index');
+// Support: company users create/list/reply tickets; platform staff use /inbox
+    Route::get('/support', [SupportTicketController::class, 'index'])->name('support.index');
+    Route::post('/support/tickets', [SupportTicketController::class, 'store'])->name('support.tickets.store');
+    Route::get('/support/tickets/{ticket}', [SupportTicketController::class, 'show'])->name('support.tickets.show');
+    Route::post('/support/tickets/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('support.tickets.reply');
 
     // Support & platform admin – super_admin + support
         Route::middleware('platform_staff')->group(function () {
@@ -447,6 +451,7 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
         Route::get('/companies/{company}/contract-templates', [CompanyContractTemplateController::class, 'index'])->name('companies.contract-templates.index');
         Route::get('/companies/{company}/contract-templates/create', [CompanyContractTemplateController::class, 'create'])->name('companies.contract-templates.create');
         Route::post('/companies/{company}/contract-templates', [CompanyContractTemplateController::class, 'store'])->name('companies.contract-templates.store');
+        Route::get('/companies/{company}/contract-templates/global/{contractTemplate}/preview', [CompanyContractTemplateController::class, 'previewGlobal'])->name('companies.contract-templates.preview-global');
         Route::get('/companies/{company}/contract-templates/{contractTemplate}/edit', [CompanyContractTemplateController::class, 'edit'])->name('companies.contract-templates.edit');
         Route::put('/companies/{company}/contract-templates/{contractTemplate}', [CompanyContractTemplateController::class, 'update'])->name('companies.contract-templates.update');
         Route::delete('/companies/{company}/contract-templates/{contractTemplate}', [CompanyContractTemplateController::class, 'destroy'])->name('companies.contract-templates.destroy');

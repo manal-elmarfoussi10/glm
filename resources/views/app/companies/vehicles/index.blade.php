@@ -61,11 +61,14 @@ Flotte – {{ $company->name }}
                         <tr class="hover:bg-white/5">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    @if ($v->image_path)
-                                        <a href="{{ route('app.companies.vehicles.show', [$company, $v]) }}" class="shrink-0 no-underline">
-                                            <img src="{{ asset('storage/' . $v->image_path) }}" alt="" class="h-12 w-16 rounded-lg border border-white/10 object-cover">
-                                        </a>
-                                    @endif
+                                    <a href="{{ route('app.companies.vehicles.show', [$company, $v]) }}" class="shrink-0 no-underline flex items-center justify-center h-12 w-16 rounded-lg border border-white/10 bg-white/5 overflow-hidden">
+                                        @if ($v->image_url)
+                                            <img src="{{ $v->image_url }}" alt="" class="h-12 w-16 w-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                                            <span class="hidden h-12 w-16 items-center justify-center text-slate-500"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></span>
+                                        @else
+                                            <span class="text-slate-500"><svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></span>
+                                        @endif
+                                    </a>
                                     <div>
                                         <div class="flex flex-wrap items-center gap-2">
                                             <a href="{{ route('app.companies.vehicles.show', [$company, $v]) }}" class="font-semibold text-white hover:text-[#93C5FD] no-underline">{{ $v->plate }}</a>

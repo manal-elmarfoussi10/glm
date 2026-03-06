@@ -47,7 +47,7 @@
         <ul class="space-y-3">
             @if ($customer->cin_front_path)
                 <li>
-                    <a href="{{ asset('storage/' . $customer->cin_front_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#93C5FD] hover:text-white no-underline">
+                    <a href="{{ route('app.companies.customers.documents.download', [$company, $customer, 'cin_front']) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#93C5FD] hover:text-white no-underline">
                         <span>CIN recto</span>
                         <span class="text-slate-500 text-sm">({{ basename($customer->cin_front_path) }})</span>
                     </a>
@@ -57,7 +57,7 @@
             @endif
             @if ($customer->cin_back_path)
                 <li>
-                    <a href="{{ asset('storage/' . $customer->cin_back_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#93C5FD] hover:text-white no-underline">
+                    <a href="{{ route('app.companies.customers.documents.download', [$company, $customer, 'cin_back']) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#93C5FD] hover:text-white no-underline">
                         <span>CIN verso</span>
                         <span class="text-slate-500 text-sm">({{ basename($customer->cin_back_path) }})</span>
                     </a>
@@ -67,7 +67,7 @@
             @endif
             @if ($customer->license_document_path)
                 <li>
-                    <a href="{{ asset('storage/' . $customer->license_document_path) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#93C5FD] hover:text-white no-underline">
+                    <a href="{{ route('app.companies.customers.documents.download', [$company, $customer, 'license']) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#93C5FD] hover:text-white no-underline">
                         <span>Permis</span>
                         <span class="text-slate-500 text-sm">({{ basename($customer->license_document_path) }})</span>
                     </a>

@@ -54,7 +54,7 @@ Modifier la dépense – {{ $company->name }}
                 <div class="sm:col-span-2">
                     <label for="attachment" class="mb-1 block text-sm font-medium text-slate-300">Pièce jointe (remplacer)</label>
                     @if ($expense->attachment_path)
-                        <p class="text-sm text-slate-400 mb-1">Actuel : <a href="{{ asset('storage/' . $expense->attachment_path) }}" target="_blank" rel="noopener" class="text-[#2563EB] hover:underline">{{ basename($expense->attachment_path) }}</a></p>
+                        <p class="text-sm text-slate-400 mb-1">Actuel : <a href="{{ storage_public_url($expense->attachment_path) }}" target="_blank" rel="noopener" class="text-[#2563EB] hover:underline">{{ basename($expense->attachment_path) }}</a></p>
                     @endif
                     <input type="file" id="attachment" name="attachment" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-[#2563EB] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white">
                     <p class="mt-1 text-xs text-slate-500">Laisser vide pour conserver. JPEG, PNG, PDF. Max 10 Mo.</p>

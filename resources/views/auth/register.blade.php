@@ -33,7 +33,7 @@
             </div>
             <div class="relative z-10 flex items-center gap-4 glm-fade-in">
                 <a href="{{ url('/admin') }}" class="flex items-center gap-4">
-                    <img src="{{ url('/images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" />
+                    <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" />
                 </a>
             </div>
             <div class="relative z-10 space-y-8 glm-slide-up">
@@ -49,7 +49,7 @@
                 <div class="glm-auth-card rounded-2xl p-8 sm:p-10 shadow-xl">
                     <div class="flex flex-col items-center lg:hidden mb-6">
                         <a href="{{ url('/admin') }}">
-                            <img src="{{ url('/images/light-logo.png') }}" alt="GLM" class="h-16 w-auto object-contain" />
+                            <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-16 w-auto object-contain" />
                         </a>
                     </div>
                     <header class="text-left space-y-1 mb-6">

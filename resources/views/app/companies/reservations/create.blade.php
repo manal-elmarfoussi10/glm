@@ -23,11 +23,12 @@ Nouvelle réservation – {{ $company->name }}
     $availabilityUrlTemplate = route('app.companies.reservations.vehicle-availability', [$company, 'VEHICLE_ID']);
     $customerLookupUrl = route('app.companies.customers.lookup-by-cin', $company);
     $customerStoreUrl = route('app.companies.customers.store', $company);
+    $customerExtractUrl = route('app.companies.customers.extract-documents', $company);
     $customerStoreCsrf = csrf_token();
 @endphp
 
 @section('content')
-<div class="glm-fade-in" x-data="reservationWizard()" x-init="init()">
+<div class="glm-fade-in" x-data="reservationWizard({{ $errors->any() ? '4' : '1' }})" x-init="init()">
     <header class="mb-6">
         <a href="{{ route('app.companies.reservations.index', $company) }}" class="text-sm font-medium text-slate-400 hover:text-white mb-2 inline-block no-underline">← Réservations · {{ $company->name }}</a>
         <h1 class="text-2xl font-bold tracking-tight text-white">Nouvelle réservation</h1>
@@ -110,11 +111,12 @@ Nouvelle réservation – {{ $company->name }}
                             :title="!vehicleAvailable(v.id) ? 'Indisponible sur cette période' : ''">
                             <div class="aspect-video bg-slate-800/50 relative">
                                 <template x-if="v.image_url">
-                                    <img :src="v.image_url" :alt="v.plate" class="h-full w-full object-cover">
+                                    <img :src="v.image_url" :alt="v.plate" class="h-full w-full object-cover" @error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
+                                    <div class="hidden h-full items-center justify-center text-slate-500 bg-white/5" style="display:none"><svg class="h-12 w-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
                                 </template>
                                 <template x-if="!v.image_url">
-                                    <div class="flex h-full items-center justify-center text-slate-500">
-                                        <svg class="h-12 w-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                                    <div class="flex h-full items-center justify-center text-slate-500 bg-white/5">
+                                        <svg class="h-12 w-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg>
                                     </div>
                                 </template>
                                 <span class="absolute top-2 right-2 rounded-full px-2 py-0.5 text-xs font-semibold"
@@ -183,7 +185,7 @@ Nouvelle réservation – {{ $company->name }}
                         </select>
                     </div>
                     <div class="border-t border-white/10 pt-4">
-                        <button type="button" @click="showAddClientModal = true" class="text-[#93C5FD] hover:text-white text-sm font-medium">+ Créer un nouveau client</button>
+                        <button type="button" @click="showAddClientModal = true; newClientExtractMerged = null; newClientExtractCin = false; newClientExtractLicense = false; newClientExtractError = ''" class="text-[#93C5FD] hover:text-white text-sm font-medium">+ Créer un nouveau client</button>
                     </div>
                 </div>
                 <div class="mt-6 flex justify-between">
@@ -199,7 +201,11 @@ Nouvelle réservation – {{ $company->name }}
                 <div class="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
                     <div class="flex gap-3">
                         <template x-if="selectedVehicle && selectedVehicle.image_url">
-                            <img :src="selectedVehicle.image_url" alt="" class="h-20 w-24 rounded-lg object-cover shrink-0">
+                            <img :src="selectedVehicle.image_url" alt="" class="h-20 w-24 rounded-lg object-cover shrink-0" @error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
+                            <div class="hidden h-20 w-24 shrink-0 rounded-lg bg-white/10 items-center justify-center" style="display:none"><svg class="h-8 w-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
+                        </template>
+                        <template x-if="selectedVehicle && !selectedVehicle.image_url">
+                            <div class="h-20 w-24 shrink-0 rounded-lg bg-white/10 flex items-center justify-center"><svg class="h-8 w-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
                         </template>
                         <div>
                             <p class="font-medium text-white" x-text="vehicleLabel"></p>
@@ -228,7 +234,7 @@ Nouvelle réservation – {{ $company->name }}
                 <div class="mt-6 flex flex-wrap gap-3">
                     <button type="button" @click="step = 3" class="glm-btn-secondary">Retour</button>
                     <button type="submit" name="status" value="draft" class="glm-btn-secondary" :disabled="submitting" @click="submitting = true; confirmAndStart = false">Enregistrer en brouillon</button>
-                    <button type="submit" name="status" value="confirmed" class="glm-btn-primary" :disabled="submitting" @click="submitting = true; confirmAndStart = false">Confirmer la réservation</button>
+                    <button type="submit" name="status" value="confirmed" class="glm-btn-primary" :disabled="submitting" @click="submitting = true; confirmAndStart = false" x-text="submitting ? 'Enregistrement…' : 'Confirmer la réservation'">Confirmer la réservation</button>
                     <input type="submit" name="status" value="confirmed" x-ref="confirmAndStartSubmit" class="hidden">
                     <button type="button" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50" :disabled="submitting" @click="confirmAndStart = true; submitting = true; $nextTick(() => $refs.confirmAndStartSubmit.click())">Confirmer et démarrer</button>
                 </div>
@@ -243,7 +249,8 @@ Nouvelle réservation – {{ $company->name }}
                     <template x-if="selectedVehicle">
                         <div class="flex gap-3">
                             <template x-if="selectedVehicle.image_url">
-                                <img :src="selectedVehicle.image_url" alt="" class="h-16 w-20 rounded-lg object-cover shrink-0">
+                                <img :src="selectedVehicle.image_url" alt="" class="h-16 w-20 rounded-lg object-cover shrink-0" @error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
+                                <div class="hidden h-16 w-20 shrink-0 rounded-lg bg-white/10 items-center justify-center" style="display:none"><svg class="h-6 w-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
                             </template>
                             <template x-if="!selectedVehicle.image_url">
                                 <div class="h-16 w-20 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
@@ -266,12 +273,39 @@ Nouvelle réservation – {{ $company->name }}
     </form>
 
     {{-- Modal: Add client --}}
-    <div x-show="showAddClientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" x-transition @keydown.escape.window="showAddClientModal = false">
-        <div class="glm-card-static max-w-md w-full p-6" @click.stop>
+    <div x-show="showAddClientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto" x-transition @keydown.escape.window="showAddClientModal = false">
+        <div class="glm-card-static max-w-md w-full p-6 my-8" @click.stop>
             <h3 class="text-lg font-semibold text-white mb-4">Nouveau client</h3>
+
+            {{-- Optional: upload CIN / Permis to auto-fill --}}
+            <div class="mb-4 rounded-xl border border-white/10 bg-white/5 p-3">
+                <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Ou importer depuis des documents</p>
+                <div class="flex gap-2">
+                    <div class="flex-1 relative rounded-lg border-2 border-dashed border-white/20 hover:border-white/40 transition min-h-[56px] flex items-center justify-center" @dragover.prevent="$event.currentTarget.classList.add('border-[#2563EB]/50')" @dragleave.prevent="$event.currentTarget.classList.remove('border-[#2563EB]/50')" @drop.prevent="uploadNewClientDoc($event, 'cin_front')">
+                        <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png" @change="uploadNewClientDoc($event, 'cin_front')" :disabled="newClientExtractLoading">
+                        <span class="text-xs text-slate-400" x-text="newClientExtractCin ? 'CIN · OK' : 'CIN'"></span>
+                    </div>
+                    <div class="flex-1 relative rounded-lg border-2 border-dashed border-white/20 hover:border-white/40 transition min-h-[56px] flex items-center justify-center" @dragover.prevent="$event.currentTarget.classList.add('border-[#2563EB]/50')" @dragleave.prevent="$event.currentTarget.classList.remove('border-[#2563EB]/50')" @drop.prevent="uploadNewClientDoc($event, 'license')">
+                        <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png" @change="uploadNewClientDoc($event, 'license')" :disabled="newClientExtractLoading">
+                        <span class="text-xs text-slate-400" x-text="newClientExtractLicense ? 'Permis · OK' : 'Permis'"></span>
+                    </div>
+                </div>
+                <p x-show="newClientExtractLoading" class="mt-1 text-xs text-slate-500">Extraction…</p>
+                <p x-show="newClientExtractError" class="mt-1 text-xs text-red-400" x-text="newClientExtractError"></p>
+                <div x-show="newClientExtractMerged && (newClientExtractMerged.name || newClientExtractMerged.cin || newClientExtractMerged.driving_license_number)" class="mt-2 flex items-center gap-2">
+                    <span class="text-xs text-slate-400">Données détectées</span>
+                    <button type="button" @click="prefillNewClientFromExtract()" class="text-xs font-medium text-[#93C5FD] hover:text-white">Pré-remplir le formulaire</button>
+                </div>
+            </div>
+
             <form @submit.prevent="submitNewClient()" class="space-y-4">
                 <div><label for="new_client_name" class="mb-1 block text-sm font-medium text-slate-300">Nom *</label><input type="text" id="new_client_name" x-model="newClientName" required class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="Nom complet"></div>
                 <div><label for="new_client_cin" class="mb-1 block text-sm font-medium text-slate-300">CIN *</label><input type="text" id="new_client_cin" x-model="newClientCin" required class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="CIN"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label for="new_client_license_number" class="mb-1 block text-sm font-medium text-slate-300">N° permis</label><input type="text" id="new_client_license_number" x-model="newClientDrivingLicenseNumber" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="N° permis"></div>
+                    <div><label for="new_client_license_expiry" class="mb-1 block text-sm font-medium text-slate-300">Expiration permis</label><input type="date" id="new_client_license_expiry" x-model="newClientDrivingLicenseExpiry" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white"></div>
+                </div>
+                <div><label for="new_client_address" class="mb-1 block text-sm font-medium text-slate-300">Adresse</label><input type="text" id="new_client_address" x-model="newClientAddress" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="Adresse"></div>
                 <div><label for="new_client_phone" class="mb-1 block text-sm font-medium text-slate-300">Téléphone</label><input type="text" id="new_client_phone" x-model="newClientPhone" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="+212 6..."></div>
                 <div><label for="new_client_email" class="mb-1 block text-sm font-medium text-slate-300">Email</label><input type="email" id="new_client_email" x-model="newClientEmail" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="email@exemple.ma"></div>
                 <p x-show="addClientError" x-text="addClientError" class="text-sm text-red-400"></p>
@@ -297,16 +331,17 @@ Nouvelle réservation – {{ $company->name }}
 </div>
 
 <script>
-function reservationWizard() {
+function reservationWizard(initialStep) {
     const vehiclesData = @json($vehiclesJson);
     const availabilityUrl = @json($availabilityUrlTemplate);
     const customerLookupUrl = @json($customerLookupUrl);
     const customerStoreUrl = @json($customerStoreUrl);
+    const customerExtractUrl = @json($customerExtractUrl);
     const customerStoreCsrf = @json($customerStoreCsrf);
 
     return {
         vehicles: Array.isArray(vehiclesData) ? vehiclesData : [],
-        step: 1,
+        step: typeof initialStep === 'number' ? initialStep : 1,
         vehicleId: '',
         customerId: '',
         startAt: '',
@@ -321,6 +356,14 @@ function reservationWizard() {
         newClientCin: '',
         newClientPhone: '',
         newClientEmail: '',
+        newClientAddress: '',
+        newClientDrivingLicenseNumber: '',
+        newClientDrivingLicenseExpiry: '',
+        newClientExtractMerged: null,
+        newClientExtractCin: false,
+        newClientExtractLicense: false,
+        newClientExtractLoading: false,
+        newClientExtractError: '',
         addClientLoading: false,
         addClientError: '',
         cinSearch: '',
@@ -454,6 +497,34 @@ function reservationWizard() {
             this.customerId = String(c.id);
             if (c.is_flagged) this.showFlaggedModal = true;
         },
+        async uploadNewClientDoc(e, type) {
+            const file = e.dataTransfer ? e.dataTransfer.files[0] : (e.target && e.target.files && e.target.files[0]);
+            if (!file) return;
+            this.newClientExtractError = '';
+            this.newClientExtractLoading = true;
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('type', type);
+            fd.append('_token', customerStoreCsrf);
+            try {
+                const r = await fetch(customerExtractUrl, { method: 'POST', body: fd, headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
+                const data = await r.json().catch(() => ({}));
+                if (r.ok && data.merged) {
+                    this.newClientExtractMerged = data.merged;
+                    if (type === 'license') this.newClientExtractLicense = true; else this.newClientExtractCin = true;
+                } else { this.newClientExtractError = 'Erreur extraction'; }
+            } catch (err) { this.newClientExtractError = 'Erreur réseau'; }
+            this.newClientExtractLoading = false;
+        },
+        prefillNewClientFromExtract() {
+            const m = this.newClientExtractMerged;
+            if (!m) return;
+            if (m.name) this.newClientName = m.name;
+            if (m.cin) this.newClientCin = m.cin;
+            if (m.address) this.newClientAddress = m.address;
+            if (m.driving_license_number) this.newClientDrivingLicenseNumber = m.driving_license_number;
+            if (m.driving_license_expiry) this.newClientDrivingLicenseExpiry = m.driving_license_expiry;
+        },
         async submitNewClient() {
             this.addClientError = '';
             this.addClientLoading = true;
@@ -463,6 +534,9 @@ function reservationWizard() {
             formData.append('cin', this.newClientCin);
             formData.append('phone', this.newClientPhone || '');
             formData.append('email', this.newClientEmail || '');
+            formData.append('address', this.newClientAddress || '');
+            formData.append('driving_license_number', this.newClientDrivingLicenseNumber || '');
+            formData.append('driving_license_expiry', this.newClientDrivingLicenseExpiry || '');
             try {
                 const r = await fetch(customerStoreUrl, { method: 'POST', body: formData, headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } });
                 const data = await r.json().catch(() => ({}));
@@ -471,6 +545,8 @@ function reservationWizard() {
                     this.customerId = String(data.customer.id);
                     this.showAddClientModal = false;
                     this.newClientName = ''; this.newClientCin = ''; this.newClientPhone = ''; this.newClientEmail = '';
+                    this.newClientAddress = ''; this.newClientDrivingLicenseNumber = ''; this.newClientDrivingLicenseExpiry = '';
+                    this.newClientExtractMerged = null; this.newClientExtractCin = false; this.newClientExtractLicense = false;
                 } else if (r.status === 422 && data.errors) {
                     const first = Object.values(data.errors)[0];
                     this.addClientError = Array.isArray(first) ? first[0] : first;
@@ -488,13 +564,27 @@ function reservationWizard() {
             this.step = 4;
         },
         onSubmit(e) {
+            this.recalcPrice();
             if (!this.vehicleId || !this.customerId || !this.startAt || !this.endAt) {
                 e.preventDefault();
-                alert('Veuillez remplir toutes les étapes.');
-                return false;
+                alert('Veuillez remplir toutes les étapes (dates, véhicule, client).');
+                this.submitting = false;
+                return;
             }
-            this.recalcPrice();
-            return true;
+            // Ensure hidden inputs have current Alpine values before native submit
+            const form = e.target;
+            if (form) {
+                const set = (name, val) => { const el = form.querySelector('[name="' + name + '"]'); if (el && val != null) el.value = String(val); };
+                set('vehicle_id', this.vehicleId);
+                set('customer_id', this.customerId);
+                set('start_at', this.startAt);
+                set('end_at', this.endAt);
+                set('total_price', this.totalPrice);
+                set('paid_now', this.paidNow ? '1' : '0');
+                set('deposit_received', this.depositReceived ? '1' : '0');
+                set('confirm_and_start', this.confirmAndStart ? '1' : '0');
+            }
+            // Allow form to submit (do not preventDefault)
         },
     };
 }

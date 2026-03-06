@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\App;
 
+use App\Contracts\DocumentExtractorInterface;
 use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Customer;
@@ -11,7 +12,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CompanyCustomerController extends Controller
 {
@@ -121,6 +125,77 @@ class CompanyCustomerController extends Controller
         ]);
     }
 
+    /**
+     * Upload a document (CIN or permis), store privately in temp, extract text, return extracted data.
+     * Session holds temp paths and extractions for final move on store.
+     */
+    public function extractDocuments(Request $request, Company $company, DocumentExtractorInterface $extractor): JsonResponse
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'type' => 'required|string|in:cin_front,cin_back,license',
+        ]);
+
+        $file = $request->file('file');
+        $sessionKey = 'customer_create_temp.' . $company->id;
+        $session = session();
+        $data = $session->get($sessionKey, ['paths' => [], 'extractions' => []]);
+
+        $tempDir = 'temp/' . $session->getId();
+        $filename = $request->input('type') . '_' . time() . '.' . $file->getClientOriginalExtension();
+        $path = $tempDir . '/' . $filename;
+
+        $disk = Storage::disk('customer_documents');
+        $disk->put($path, $file->get());
+
+        $fullPath = $disk->path($path);
+        $typeForExtractor = $request->input('type') === 'license' ? 'license' : $request->input('type');
+        $extracted = $extractor->extractFromFile($fullPath, $typeForExtractor);
+
+        $data['paths'][$request->input('type')] = $path;
+        $data['extractions'][$request->input('type')] = $extracted;
+        $data['merged'] = $extractor->mergeExtracted(array_values($data['extractions']));
+        $session->put($sessionKey, $data);
+
+        return response()->json([
+            'temp_path' => $path,
+            'extracted' => $extracted,
+            'merged' => $data['merged'],
+            'filename' => $file->getClientOriginalName(),
+        ]);
+    }
+
+    public function downloadDocument(Company $company, Customer $customer, string $type): StreamedResponse
+    {
+        $this->ensureCustomerBelongsToCompany($customer, $company);
+
+        $field = match ($type) {
+            'cin_front' => 'cin_front_path',
+            'cin_back' => 'cin_back_path',
+            'license' => 'license_document_path',
+            default => null,
+        };
+        if (! $field || ! $customer->$field) {
+            abort(404);
+        }
+
+        $path = $customer->$field;
+        $disk = Storage::disk('customer_documents');
+        if ($disk->exists($path)) {
+            return $disk->download($path, basename($path), [
+                'Content-Type' => $disk->mimeType($path),
+            ]);
+        }
+        // Legacy: documents stored on public disk before private migration
+        $publicDisk = Storage::disk('public');
+        if ($publicDisk->exists($path)) {
+            return $publicDisk->download($path, basename($path), [
+                'Content-Type' => $publicDisk->mimeType($path),
+            ]);
+        }
+        abort(404);
+    }
+
     public function store(Request $request, Company $company): RedirectResponse|JsonResponse
     {
         $validated = $this->validateCustomer($request);
@@ -128,7 +203,8 @@ class CompanyCustomerController extends Controller
         $validated['is_flagged'] = $request->boolean('is_flagged');
         unset($validated['cin_front'], $validated['cin_back'], $validated['license_document']);
         $customer = Customer::create($validated);
-        $this->handleUploads($request, $customer);
+        $this->moveTempDocumentsToCustomer($request, $company, $customer);
+        $this->handleUploads($request, $customer, $company);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -175,7 +251,7 @@ class CompanyCustomerController extends Controller
         $validated['is_flagged'] = $request->boolean('is_flagged');
         unset($validated['cin_front'], $validated['cin_back'], $validated['license_document']);
         $customer->update($validated);
-        $this->handleUploads($request, $customer);
+        $this->handleUploads($request, $customer, $company);
         return redirect()
             ->route('app.companies.customers.show', [$company, $customer])
             ->with('success', 'Client mis à jour.');
@@ -215,17 +291,61 @@ class CompanyCustomerController extends Controller
         return $request->validate($rules);
     }
 
-    private function handleUploads(Request $request, Customer $customer): void
+    private function handleUploads(Request $request, Customer $customer, Company $company): void
     {
+        $disk = Storage::disk('customer_documents');
+        $baseDir = $company->id . '/customers/' . $customer->id;
+        if (! $disk->exists($baseDir)) {
+            $disk->makeDirectory($baseDir);
+        }
         $updates = [];
         foreach (['cin_front' => 'cin_front_path', 'cin_back' => 'cin_back_path', 'license_document' => 'license_document_path'] as $input => $field) {
             if ($request->hasFile($input)) {
-                $path = $request->file($input)->store('customers/' . $customer->id, 'public');
+                $file = $request->file($input);
+                $path = $baseDir . '/' . $input . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $disk->put($path, $file->get());
                 $updates[$field] = $path;
             }
         }
         if (! empty($updates)) {
             $customer->update($updates);
         }
+    }
+
+    /**
+     * Move temp documents (from extraction flow) into customer folder and clear session.
+     */
+    private function moveTempDocumentsToCustomer(Request $request, Company $company, Customer $customer): void
+    {
+        $sessionKey = 'customer_create_temp.' . $company->id;
+        $data = session()->get($sessionKey);
+        if (! $data || empty($data['paths'])) {
+            return;
+        }
+
+        $disk = Storage::disk('customer_documents');
+        $baseDir = $company->id . '/customers/' . $customer->id;
+        if (! $disk->exists($baseDir)) {
+            $disk->makeDirectory($baseDir);
+        }
+        $updates = [];
+        $typeToField = ['cin_front' => 'cin_front_path', 'cin_back' => 'cin_back_path', 'license' => 'license_document_path'];
+
+        foreach ($data['paths'] as $type => $tempPath) {
+            if (! $disk->exists($tempPath)) {
+                continue;
+            }
+            $ext = pathinfo($tempPath, PATHINFO_EXTENSION);
+            $newPath = $baseDir . '/' . $type . '_' . time() . '.' . $ext;
+            $disk->move($tempPath, $newPath);
+            if (isset($typeToField[$type])) {
+                $updates[$typeToField[$type]] = $newPath;
+            }
+        }
+
+        if (! empty($updates)) {
+            $customer->update($updates);
+        }
+        session()->forget($sessionKey);
     }
 }

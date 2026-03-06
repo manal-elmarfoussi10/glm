@@ -14,7 +14,7 @@
             @if ($hasLogo)
                 <div class="flex justify-center mb-6">
                     <a href="{{ filament()->getUrl() }}" class="inline-flex items-center justify-center">
-                        <img src="{{ url('/images/light-logo.png') }}" alt="GLM" class="h-12 w-auto object-contain" />
+                        <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-12 w-auto object-contain" />
                     </a>
                 </div>
             @endif

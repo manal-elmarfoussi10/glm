@@ -261,8 +261,8 @@ class CompanyVehicleController extends Controller
         $newVehicle = Vehicle::create($attrs);
 
         return redirect()
-            ->route('app.companies.vehicles.show', [$company, $newVehicle])
-            ->with('success', 'Véhicule dupliqué. Seule la plaque a été modifiée.');
+            ->route('app.companies.vehicles.edit', [$company, $newVehicle])
+            ->with('success', 'Véhicule dupliqué. Modifiez les champs souhaités puis enregistrez.');
     }
 
     private function validateVehicle(Request $request, ?Vehicle $vehicle = null): array
@@ -330,12 +330,12 @@ class CompanyVehicleController extends Controller
         $updates = [];
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('vehicles/' . $vehicle->id, 'public');
-            $updates['image_path'] = $path;
+            $updates['image_path'] = normalize_storage_path($path) ?? $path;
         }
         foreach (['insurance_document' => 'insurance_document_path', 'vignette_receipt' => 'vignette_receipt_path', 'visite_document' => 'visite_document_path', 'financing_contract' => 'financing_contract_path'] as $input => $field) {
             if ($request->hasFile($input)) {
                 $path = $request->file($input)->store('vehicles/' . $vehicle->id, 'public');
-                $updates[$field] = $path;
+                $updates[$field] = normalize_storage_path($path) ?? $path;
             }
         }
         if (! empty($updates)) {

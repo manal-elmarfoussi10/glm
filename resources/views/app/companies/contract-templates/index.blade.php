@@ -109,7 +109,10 @@ Modèles de contrats – {{ $company->name }}
                             <span class="font-medium text-[color:var(--text)]">{{ $gt->name }}</span>
                             <span class="text-[color:var(--muted)] text-sm ml-2">({{ $gt->slug }})</span>
                         </div>
-                        <a href="{{ route('app.companies.contract-templates.create', [$company, 'from_global' => $gt->id]) }}" class="glm-btn-primary text-sm py-2 no-underline">Dupliquer</a>
+                        <div class="flex items-center gap-2">
+                            <a href="{{ route('app.companies.contract-templates.preview-global', [$company, $gt]) }}" target="_blank" rel="noopener" class="glm-btn-secondary text-sm py-2 no-underline">Voir</a>
+                            <a href="{{ route('app.companies.contract-templates.create', [$company, 'from_global' => $gt->id]) }}" class="glm-btn-primary text-sm py-2 no-underline">Dupliquer</a>
+                        </div>
                     </li>
                 @endforeach
             </ul>

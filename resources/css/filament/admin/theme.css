@@ -232,6 +232,29 @@
     display: none !important;
 }
 
+/* ========== Light mode only: form inputs – visible border & focus (dark unchanged) ========== */
+html:not(.dark) .fi-input,
+html:not(.dark) .fi-select-input,
+html:not(.dark) .fi-textarea,
+html:not(.dark) .fi-input-wrp input,
+html:not(.dark) .fi-input-wrp select,
+html:not(.dark) .fi-input-wrp textarea {
+    border: 1px solid #E2E8F0 !important;
+    background-color: #FFFFFF !important;
+    border-radius: 10px !important;
+    color: #0F172A !important;
+}
+html:not(.dark) .fi-input:focus,
+html:not(.dark) .fi-select-input:focus,
+html:not(.dark) .fi-textarea:focus,
+html:not(.dark) .fi-input-wrp:focus-within input,
+html:not(.dark) .fi-input-wrp:focus-within select,
+html:not(.dark) .fi-input-wrp:focus-within textarea {
+    border-color: #3B82F6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+    outline: none !important;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
     width: 8px;

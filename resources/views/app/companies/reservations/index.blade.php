@@ -106,8 +106,11 @@ Réservations – {{ $company->name }}
                             <td class="px-6 py-4 text-sm text-[color:var(--text)]">{{ $r->customer->name }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    @if ($r->vehicle->image_path)
-                                        <img src="{{ asset('storage/' . $r->vehicle->image_path) }}" alt="" class="h-10 w-14 rounded border border-[color:var(--border)] object-cover shrink-0">
+                                    @if ($r->vehicle->image_url)
+                                        <img src="{{ $r->vehicle->image_url }}" alt="" class="h-10 w-14 rounded border border-[color:var(--border)] object-cover shrink-0" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='flex');">
+                                        <span class="h-10 w-14 rounded border border-[color:var(--border)] bg-[color:var(--surface-2)] shrink-0 flex items-center justify-center text-[color:var(--muted)]" style="display:none"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></span>
+                                    @else
+                                        <span class="h-10 w-14 rounded border border-[color:var(--border)] bg-[color:var(--surface-2)] shrink-0 flex items-center justify-center text-[color:var(--muted)]"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></span>
                                     @endif
                                     <span class="text-sm text-[color:var(--muted)]">{{ $r->vehicle->plate }} <span class="text-[color:var(--muted)]">{{ $r->vehicle->brand }} {{ $r->vehicle->model }}</span></span>
                                 </div>
