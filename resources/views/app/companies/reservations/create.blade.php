@@ -46,7 +46,7 @@ Nouvelle réservation – {{ $company->name }}
         </div>
     @endif
 
-    <form action="{{ route('app.companies.reservations.store', $company) }}" method="post" @submit="onSubmit" class="lg:grid lg:grid-cols-[1fr,340px] lg:gap-8">
+    <form action="{{ route('app.companies.reservations.store', $company) }}" method="post" @@submit="onSubmit" class="lg:grid lg:grid-cols-[1fr,340px] lg:gap-8">
         @csrf
         <input type="hidden" name="vehicle_id" :value="vehicleId">
         <input type="hidden" name="customer_id" :value="customerId">
@@ -80,11 +80,11 @@ Nouvelle réservation – {{ $company->name }}
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
                         <label for="start_at" class="mb-1 block text-sm font-medium text-slate-300">Début *</label>
-                        <input type="datetime-local" id="start_at" x-model="startAt" @change="recalcPrice()" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white">
+                        <input type="datetime-local" id="start_at" x-model="startAt" @@change="recalcPrice()" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white">
                     </div>
                     <div>
                         <label for="end_at" class="mb-1 block text-sm font-medium text-slate-300">Fin *</label>
-                        <input type="datetime-local" id="end_at" x-model="endAt" @change="recalcPrice()" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white">
+                        <input type="datetime-local" id="end_at" x-model="endAt" @@change="recalcPrice()" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white">
                     </div>
                 </div>
                 <div class="mt-4 flex items-center gap-4 text-sm">
@@ -93,7 +93,7 @@ Nouvelle réservation – {{ $company->name }}
                 </div>
                 <div class="mt-6 flex justify-between">
                     <span></span>
-                    <button type="button" @click="validateStep1AndGoToVehicle()" class="glm-btn-primary">Suivant</button>
+                    <button type="button" @@click="validateStep1AndGoToVehicle()" class="glm-btn-primary">Suivant</button>
                 </div>
             </div>
 
@@ -105,13 +105,13 @@ Nouvelle réservation – {{ $company->name }}
                 <p x-show="step === 2 && (!vehicles || vehicles.length === 0)" x-cloak class="text-sm text-amber-400 mb-4">Aucun véhicule à afficher. Rechargez la page (F5) ou vérifiez que des véhicules existent pour cette entreprise.</p>
                 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" id="vehicle-cards-container">
                     <template x-for="(v, index) in (vehicles || [])" :key="v.id">
-                        <div @click="selectVehicle(v)"
+                        <div @@click="selectVehicle(v)"
                             class="rounded-xl border-2 transition cursor-pointer overflow-hidden"
                             :class="vehicleAvailable(v.id) ? (vehicleId == v.id ? 'border-[#2563EB] bg-[#2563EB]/10' : 'border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/5') : 'border-red-500/30 bg-red-500/5 cursor-not-allowed opacity-75'"
                             :title="!vehicleAvailable(v.id) ? 'Indisponible sur cette période' : ''">
                             <div class="aspect-video bg-slate-800/50 relative">
                                 <template x-if="v.image_url">
-                                    <img :src="v.image_url" :alt="v.plate" class="h-full w-full object-cover" @error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
+                                    <img :src="v.image_url" :alt="v.plate" class="h-full w-full object-cover" @@error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
                                     <div class="hidden h-full items-center justify-center text-slate-500 bg-white/5" style="display:none"><svg class="h-12 w-12 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
                                 </template>
                                 <template x-if="!v.image_url">
@@ -137,8 +137,8 @@ Nouvelle réservation – {{ $company->name }}
                     </template>
                 </div>
                 <div class="mt-6 flex justify-between">
-                    <button type="button" @click="step = 1" class="glm-btn-secondary">Retour</button>
-                    <button type="button" @click="validateStep2AndGoToClient()" class="glm-btn-primary">Suivant</button>
+                    <button type="button" @@click="step = 1" class="glm-btn-secondary">Retour</button>
+                    <button type="button" @@click="validateStep2AndGoToClient()" class="glm-btn-primary">Suivant</button>
                 </div>
             </div>
 
@@ -151,7 +151,7 @@ Nouvelle réservation – {{ $company->name }}
                     <div>
                         <label for="cin_search" class="mb-1 block text-sm font-medium text-slate-300">CIN</label>
                         <div class="relative">
-                            <input type="text" id="cin_search" x-model="cinSearch" @input.debounce.400ms="lookupCin()"
+                            <input type="text" id="cin_search" x-model="cinSearch" @@input.debounce.400ms="lookupCin()"
                                 class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 pr-10 text-sm text-white" placeholder="Rechercher par CIN…">
                             <span x-show="cinLoading" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
                                 <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -172,7 +172,7 @@ Nouvelle réservation – {{ $company->name }}
                             <span x-text="'Impayé : ' + customerSearchResult.unpaid_balance.toLocaleString('fr-MA') + ' MAD'"></span>
                             <span x-text="'Dégâts : ' + customerSearchResult.damage_count"></span>
                         </div>
-                        <button type="button" @click="selectSearchedCustomer()" class="glm-btn-primary text-sm">Utiliser ce client</button>
+                        <button type="button" @@click="selectSearchedCustomer()" class="glm-btn-primary text-sm">Utiliser ce client</button>
                     </div>
                     <p x-show="customerSearchResult && !customerSearchResult.found && cinSearch.length >= 2" x-cloak class="text-sm text-slate-400">Aucun client trouvé. Créez-en un ci-dessous.</p>
                     <div class="border-t border-white/10 pt-4">
@@ -185,12 +185,12 @@ Nouvelle réservation – {{ $company->name }}
                         </select>
                     </div>
                     <div class="border-t border-white/10 pt-4">
-                        <button type="button" @click="showAddClientModal = true; newClientExtractMerged = null; newClientExtractCin = false; newClientExtractLicense = false; newClientExtractError = ''" class="text-[#93C5FD] hover:text-white text-sm font-medium">+ Créer un nouveau client</button>
+                        <button type="button" @@click="showAddClientModal = true; newClientExtractMerged = null; newClientExtractCin = false; newClientExtractLicense = false; newClientExtractError = ''" class="text-[#93C5FD] hover:text-white text-sm font-medium">+ Créer un nouveau client</button>
                     </div>
                 </div>
                 <div class="mt-6 flex justify-between">
-                    <button type="button" @click="step = 2" class="glm-btn-secondary">Retour</button>
-                    <button type="button" @click="goStep4()" class="glm-btn-primary">Suivant</button>
+                    <button type="button" @@click="step = 2" class="glm-btn-secondary">Retour</button>
+                    <button type="button" @@click="goStep4()" class="glm-btn-primary">Suivant</button>
                 </div>
             </div>
 
@@ -201,7 +201,7 @@ Nouvelle réservation – {{ $company->name }}
                 <div class="rounded-xl border border-white/10 bg-white/5 p-4 space-y-3">
                     <div class="flex gap-3">
                         <template x-if="selectedVehicle && selectedVehicle.image_url">
-                            <img :src="selectedVehicle.image_url" alt="" class="h-20 w-24 rounded-lg object-cover shrink-0" @error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
+                            <img :src="selectedVehicle.image_url" alt="" class="h-20 w-24 rounded-lg object-cover shrink-0" @@error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
                             <div class="hidden h-20 w-24 shrink-0 rounded-lg bg-white/10 items-center justify-center" style="display:none"><svg class="h-8 w-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
                         </template>
                         <template x-if="selectedVehicle && !selectedVehicle.image_url">
@@ -232,11 +232,11 @@ Nouvelle réservation – {{ $company->name }}
                     </label>
                 </div>
                 <div class="mt-6 flex flex-wrap gap-3">
-                    <button type="button" @click="step = 3" class="glm-btn-secondary">Retour</button>
-                    <button type="submit" name="status" value="draft" class="glm-btn-secondary" :disabled="submitting" @click="submitting = true; confirmAndStart = false">Enregistrer en brouillon</button>
-                    <button type="submit" name="status" value="confirmed" class="glm-btn-primary" :disabled="submitting" @click="submitting = true; confirmAndStart = false" x-text="submitting ? 'Enregistrement…' : 'Confirmer la réservation'">Confirmer la réservation</button>
+                    <button type="button" @@click="step = 3" class="glm-btn-secondary">Retour</button>
+                    <button type="submit" name="status" value="draft" class="glm-btn-secondary" :disabled="submitting" @@click="submitting = true; confirmAndStart = false">Enregistrer en brouillon</button>
+                    <button type="submit" name="status" value="confirmed" class="glm-btn-primary" :disabled="submitting" @@click="submitting = true; confirmAndStart = false" x-text="submitting ? 'Enregistrement…' : 'Confirmer la réservation'">Confirmer la réservation</button>
                     <input type="submit" name="status" value="confirmed" x-ref="confirmAndStartSubmit" class="hidden">
-                    <button type="button" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50" :disabled="submitting" @click="confirmAndStart = true; submitting = true; $nextTick(() => $refs.confirmAndStartSubmit.click())">Confirmer et démarrer</button>
+                    <button type="button" class="rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50" :disabled="submitting" @@click="confirmAndStart = true; submitting = true; $nextTick(() => $refs.confirmAndStartSubmit.click())">Confirmer et démarrer</button>
                 </div>
             </div>
         </div>
@@ -249,7 +249,7 @@ Nouvelle réservation – {{ $company->name }}
                     <template x-if="selectedVehicle">
                         <div class="flex gap-3">
                             <template x-if="selectedVehicle.image_url">
-                                <img :src="selectedVehicle.image_url" alt="" class="h-16 w-20 rounded-lg object-cover shrink-0" @error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
+                                <img :src="selectedVehicle.image_url" alt="" class="h-16 w-20 rounded-lg object-cover shrink-0" @@error="$event.target.style.display='none'; $event.target.nextElementSibling && ($event.target.nextElementSibling.style.display='flex')">
                                 <div class="hidden h-16 w-20 shrink-0 rounded-lg bg-white/10 items-center justify-center" style="display:none"><svg class="h-6 w-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>
                             </template>
                             <template x-if="!selectedVehicle.image_url">
@@ -273,20 +273,20 @@ Nouvelle réservation – {{ $company->name }}
     </form>
 
     {{-- Modal: Add client --}}
-    <div x-show="showAddClientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto" x-transition @keydown.escape.window="showAddClientModal = false">
-        <div class="glm-card-static max-w-md w-full p-6 my-8" @click.stop>
+    <div x-show="showAddClientModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto" x-transition @@keydown.escape.window="showAddClientModal = false">
+        <div class="glm-card-static max-w-md w-full p-6 my-8" @@click.stop>
             <h3 class="text-lg font-semibold text-white mb-4">Nouveau client</h3>
 
             {{-- Optional: upload CIN / Permis to auto-fill --}}
             <div class="mb-4 rounded-xl border border-white/10 bg-white/5 p-3">
                 <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-2">Ou importer depuis des documents</p>
                 <div class="flex gap-2">
-                    <div class="flex-1 relative rounded-lg border-2 border-dashed border-white/20 hover:border-white/40 transition min-h-[56px] flex items-center justify-center" @dragover.prevent="$event.currentTarget.classList.add('border-[#2563EB]/50')" @dragleave.prevent="$event.currentTarget.classList.remove('border-[#2563EB]/50')" @drop.prevent="uploadNewClientDoc($event, 'cin_front')">
-                        <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png" @change="uploadNewClientDoc($event, 'cin_front')" :disabled="newClientExtractLoading">
+                    <div class="flex-1 relative rounded-lg border-2 border-dashed border-white/20 hover:border-white/40 transition min-h-[56px] flex items-center justify-center" @@dragover.prevent="$event.currentTarget.classList.add('border-[#2563EB]/50')" @@dragleave.prevent="$event.currentTarget.classList.remove('border-[#2563EB]/50')" @@drop.prevent="uploadNewClientDoc($event, 'cin_front')">
+                        <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png" @@change="uploadNewClientDoc($event, 'cin_front')" :disabled="newClientExtractLoading">
                         <span class="text-xs text-slate-400" x-text="newClientExtractCin ? 'CIN · OK' : 'CIN'"></span>
                     </div>
-                    <div class="flex-1 relative rounded-lg border-2 border-dashed border-white/20 hover:border-white/40 transition min-h-[56px] flex items-center justify-center" @dragover.prevent="$event.currentTarget.classList.add('border-[#2563EB]/50')" @dragleave.prevent="$event.currentTarget.classList.remove('border-[#2563EB]/50')" @drop.prevent="uploadNewClientDoc($event, 'license')">
-                        <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png" @change="uploadNewClientDoc($event, 'license')" :disabled="newClientExtractLoading">
+                    <div class="flex-1 relative rounded-lg border-2 border-dashed border-white/20 hover:border-white/40 transition min-h-[56px] flex items-center justify-center" @@dragover.prevent="$event.currentTarget.classList.add('border-[#2563EB]/50')" @@dragleave.prevent="$event.currentTarget.classList.remove('border-[#2563EB]/50')" @@drop.prevent="uploadNewClientDoc($event, 'license')">
+                        <input type="file" class="absolute inset-0 opacity-0 cursor-pointer" accept=".pdf,.jpg,.jpeg,.png" @@change="uploadNewClientDoc($event, 'license')" :disabled="newClientExtractLoading">
                         <span class="text-xs text-slate-400" x-text="newClientExtractLicense ? 'Permis · OK' : 'Permis'"></span>
                     </div>
                 </div>
@@ -294,11 +294,11 @@ Nouvelle réservation – {{ $company->name }}
                 <p x-show="newClientExtractError" class="mt-1 text-xs text-red-400" x-text="newClientExtractError"></p>
                 <div x-show="newClientExtractMerged && (newClientExtractMerged.name || newClientExtractMerged.cin || newClientExtractMerged.driving_license_number)" class="mt-2 flex items-center gap-2">
                     <span class="text-xs text-slate-400">Données détectées</span>
-                    <button type="button" @click="prefillNewClientFromExtract()" class="text-xs font-medium text-[#93C5FD] hover:text-white">Pré-remplir le formulaire</button>
+                    <button type="button" @@click="prefillNewClientFromExtract()" class="text-xs font-medium text-[#93C5FD] hover:text-white">Pré-remplir le formulaire</button>
                 </div>
             </div>
 
-            <form @submit.prevent="submitNewClient()" class="space-y-4">
+            <form @@submit.prevent="submitNewClient()" class="space-y-4">
                 <div><label for="new_client_name" class="mb-1 block text-sm font-medium text-slate-300">Nom *</label><input type="text" id="new_client_name" x-model="newClientName" required class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="Nom complet"></div>
                 <div><label for="new_client_cin" class="mb-1 block text-sm font-medium text-slate-300">CIN *</label><input type="text" id="new_client_cin" x-model="newClientCin" required class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="CIN"></div>
                 <div class="grid grid-cols-2 gap-3">
@@ -310,7 +310,7 @@ Nouvelle réservation – {{ $company->name }}
                 <div><label for="new_client_email" class="mb-1 block text-sm font-medium text-slate-300">Email</label><input type="email" id="new_client_email" x-model="newClientEmail" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white" placeholder="email@@exemple.ma"></div>
                 <p x-show="addClientError" x-text="addClientError" class="text-sm text-red-400"></p>
                 <div class="flex gap-3 justify-end pt-2">
-                    <button type="button" @click="showAddClientModal = false; addClientError = ''" class="glm-btn-secondary">Annuler</button>
+                    <button type="button" @@click="showAddClientModal = false; addClientError = ''" class="glm-btn-secondary">Annuler</button>
                     <button type="submit" class="glm-btn-primary" :disabled="addClientLoading" x-text="addClientLoading ? 'Enregistrement…' : 'Ajouter'"></button>
                 </div>
             </form>
@@ -319,12 +319,12 @@ Nouvelle réservation – {{ $company->name }}
 
     {{-- Modal: Client flagged --}}
     <div x-show="showFlaggedModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" x-transition>
-        <div class="glm-card-static max-w-md p-6" @click.stop>
+        <div class="glm-card-static max-w-md p-6" @@click.stop>
             <h3 class="text-lg font-semibold text-white mb-2">Client signalé</h3>
             <p class="text-slate-300 text-sm mb-4">Ce client est marqué comme signalé. Voulez-vous quand même l'utiliser pour cette réservation ?</p>
             <div class="flex gap-3 justify-end">
-                <button type="button" @click="showFlaggedModal = false; customerId = ''" class="glm-btn-secondary">Annuler</button>
-                <button type="button" @click="showFlaggedModal = false; step = 4; recalcPrice()" class="glm-btn-primary">Oui, continuer</button>
+                <button type="button" @@click="showFlaggedModal = false; customerId = ''" class="glm-btn-secondary">Annuler</button>
+                <button type="button" @@click="showFlaggedModal = false; step = 4; recalcPrice()" class="glm-btn-primary">Oui, continuer</button>
             </div>
         </div>
     </div>

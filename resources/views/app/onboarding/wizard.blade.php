@@ -130,7 +130,15 @@ Configuration de votre espace
         <div class="glm-card-static p-6 rounded-2xl">
             <h2 class="text-lg font-semibold text-white mb-2">Étape 3 — Réseau partenaires GLM</h2>
             <p class="text-sm text-slate-400 mb-6">Rejoignez le réseau pour que d'autres agences puissent voir votre disponibilité et vous contacter si besoin.</p>
-            <form action="{{ route('app.onboarding.store.step3') }}" method="post" class="space-y-6" x-data="{ join: false }">
+            <form action="{{ route('app.onboarding.store.step3') }}" method="post" class="space-y-6" x-data="{
+                    join: false,
+                    checkAll() { this.$refs.allPartnerOptions.querySelectorAll('input[type=\'checkbox\']').forEach(cb => cb.checked = true); },
+                    uncheckAll() { this.$refs.allPartnerOptions.querySelectorAll('input[type=\'checkbox\']').forEach(cb => cb.checked = false); },
+                    checkAllInfo() { this.$refs.infoCheckboxes.querySelectorAll('input[type=\'checkbox\']').forEach(cb => cb.checked = true); },
+                    uncheckAllInfo() { this.$refs.infoCheckboxes.querySelectorAll('input[type=\'checkbox\']').forEach(cb => cb.checked = false); },
+                    checkAllCategories() { this.$refs.categoryCheckboxes.querySelectorAll('input[type=\'checkbox\']').forEach(cb => cb.checked = true); },
+                    uncheckAllCategories() { this.$refs.categoryCheckboxes.querySelectorAll('input[type=\'checkbox\']').forEach(cb => cb.checked = false); }
+                }">
                 @csrf
                 <label class="flex items-center gap-3 cursor-pointer">
                     <input type="hidden" name="join_network" value="0">
@@ -138,9 +146,24 @@ Configuration de votre espace
                     <span class="font-medium text-white">Rejoindre le réseau partenaires GLM</span>
                 </label>
                 <p class="text-sm text-slate-400">Les autres agences pourront voir votre disponibilité (ville, catégories de véhicules). Aucune donnée de réservation ni plaque n'est partagée.</p>
-                <div x-show="join" x-cloak class="space-y-4 pl-6 border-l-2 border-[#2563EB]/30">
-                    <p class="text-sm font-medium text-slate-300">Informations visibles par les partenaires</p>
-                    <div class="flex flex-wrap gap-4">
+                <div x-show="join" x-cloak class="space-y-4 pl-6 border-l-2 border-[#2563EB]/30" x-ref="allPartnerOptions">
+                    <p class="text-sm font-medium text-slate-300 flex items-center gap-2 flex-wrap">
+                        <span>Tout</span>
+                        <span class="text-xs font-normal">
+                            <button type="button" @@click="checkAll()" class="text-[#93C5FD] hover:text-white">Tout cocher</button>
+                            <span class="text-slate-500 mx-1">·</span>
+                            <button type="button" @@click="uncheckAll()" class="text-slate-400 hover:text-white">Tout décocher</button>
+                        </span>
+                    </p>
+                    <p class="text-sm font-medium text-slate-300 flex items-center justify-between gap-2 flex-wrap">
+                        <span>Informations visibles par les partenaires</span>
+                        <span class="text-xs font-normal">
+                            <button type="button" @@click="checkAllInfo()" class="text-[#93C5FD] hover:text-white">Tout cocher</button>
+                            <span class="text-slate-500 mx-1">·</span>
+                            <button type="button" @@click="uncheckAllInfo()" class="text-slate-400 hover:text-white">Tout décocher</button>
+                        </span>
+                    </p>
+                    <div class="flex flex-wrap gap-4" x-ref="infoCheckboxes">
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="hidden" name="show_company_name" value="0">
                             <input type="checkbox" name="show_company_name" value="1" checked class="rounded border-white/20 bg-white/5 text-[#2563EB]">
@@ -162,8 +185,15 @@ Configuration de votre espace
                             <span class="text-slate-300">Email</span>
                         </label>
                     </div>
-                    <p class="text-sm text-slate-400">Catégories de véhicules à partager</p>
-                    <div class="flex flex-wrap gap-3">
+                    <p class="text-sm text-slate-400 flex items-center justify-between gap-2 flex-wrap">
+                        <span>Catégories de véhicules à partager</span>
+                        <span class="text-xs">
+                            <button type="button" @@click="checkAllCategories()" class="text-[#93C5FD] hover:text-white">Tout cocher</button>
+                            <span class="text-slate-500 mx-1">·</span>
+                            <button type="button" @@click="uncheckAllCategories()" class="text-slate-400 hover:text-white">Tout décocher</button>
+                        </span>
+                    </p>
+                    <div class="flex flex-wrap gap-3" x-ref="categoryCheckboxes">
                         @foreach ($categories as $key => $label)
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" name="shared_categories[]" value="{{ $key }}" class="rounded border-white/20 bg-white/5 text-[#2563EB]">

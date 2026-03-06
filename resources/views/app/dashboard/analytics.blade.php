@@ -81,7 +81,7 @@
                         </span>
                         <span class="text-slate-400">{{ $item['label'] }}</span>
                     @else
-                        <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-slate-400">•</span>
+                        <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-500/20 text-red-400" aria-hidden="true">•</span>
                         @if ($item['route'])
                             <a href="{{ route($item['route'], $company) }}" class="text-[#93C5FD] hover:text-white font-medium no-underline">{{ $item['label'] }}</a>
                         @else
