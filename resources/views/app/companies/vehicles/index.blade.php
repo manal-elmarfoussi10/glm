@@ -67,7 +67,12 @@ Flotte – {{ $company->name }}
                                         </a>
                                     @endif
                                     <div>
-                                        <a href="{{ route('app.companies.vehicles.show', [$company, $v]) }}" class="font-semibold text-white hover:text-[#93C5FD] no-underline">{{ $v->plate }}</a>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <a href="{{ route('app.companies.vehicles.show', [$company, $v]) }}" class="font-semibold text-white hover:text-[#93C5FD] no-underline">{{ $v->plate }}</a>
+                                            @if ($v->isIncomplete())
+                                                <span class="rounded px-2 py-0.5 text-xs font-medium bg-amber-500/20 text-amber-400" title="Complétez la fiche véhicule">Informations incomplètes</span>
+                                            @endif
+                                        </div>
                                         <p class="text-sm text-slate-400">{{ $v->brand }} {{ $v->model }} @if($v->year) ({{ $v->year }}) @endif</p>
                                     </div>
                                 </div>
@@ -110,7 +115,10 @@ Flotte – {{ $company->name }}
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="{{ route('app.companies.vehicles.show', [$company, $v]) }}" class="glm-btn-secondary text-sm py-1.5 px-3 no-underline">Voir</a>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="{{ route('app.companies.vehicles.show', [$company, $v]) }}" class="glm-btn-secondary text-sm py-1.5 px-3 no-underline">Voir</a>
+                                    <a href="{{ route('app.companies.vehicles.duplicate', [$company, $v]) }}" class="inline-flex items-center gap-1 rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-sm text-slate-300 hover:bg-white/10 hover:text-white no-underline" title="Dupliquer ce véhicule (nouvelle plaque)">Dupliquer</a>
+                                </div>
                             </td>
                         </tr>
                     @empty

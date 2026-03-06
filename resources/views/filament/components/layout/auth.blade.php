@@ -22,12 +22,12 @@
         .glm-fade-in { animation: glm-fade-in 0.6s ease-out forwards; }
         .glm-slide-up { animation: glm-slide-up 0.7s ease-out 0.2s forwards; opacity: 0; }
 
-        /* ✅ FIX: remove the huge left spacing inside email input on auth pages */
+        /* ✅ Email input: no extra padding – wrapper provides 12px so text starts near left edge */
         .glm-auth-card input[type="email"]{
-            padding-left: 1rem !important;      /* normal spacing */
-            padding-right: 1rem !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
             text-indent: 0 !important;
-            background-position: 1rem center !important; /* if browser adds icons */
+            background-position: 12px center !important; /* if browser adds icons */
         }
 
         /* ✅ If Filament keeps adding "prefix space", force all auth inputs to match */

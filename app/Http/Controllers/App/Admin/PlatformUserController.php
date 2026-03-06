@@ -80,6 +80,7 @@ class PlatformUserController extends Controller
 
         $user = User::create($validated);
         AuditLog::log('platform_user.created', User::class, (int) $user->id, null, ['email' => $user->email, 'role' => $user->role]);
+        $user->notify(new \App\Notifications\NewUserCreatedNotification(url('/admin')));
 
         return redirect()
             ->route('app.admin.users.index')

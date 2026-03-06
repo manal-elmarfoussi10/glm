@@ -47,8 +47,9 @@ class CompanyPartnerSettingController extends Controller
             'shared_branch_ids' => 'nullable|array',
             'shared_branch_ids.*' => 'exists:branches,id',
             'shared_categories' => 'nullable|array',
-            'shared_categories.*' => 'in:economy,sedan,suv',
+            'shared_categories.*' => 'string|in:' . implode(',', array_keys(\App\Models\Vehicle::PARTNER_CATEGORIES)),
             'show_price' => 'boolean',
+            'allow_contact_requests' => 'nullable|boolean',
         ]);
 
         $branchIds = $validated['shared_branch_ids'] ?? [];
@@ -61,12 +62,13 @@ class CompanyPartnerSettingController extends Controller
 
         $setting = $company->partnerSetting()->firstOrCreate(
             ['company_id' => $company->id],
-            ['share_enabled' => false, 'shared_branch_ids' => [], 'shared_categories' => [], 'show_price' => false]
+            ['share_enabled' => false, 'shared_branch_ids' => [], 'shared_categories' => [], 'show_price' => false, 'allow_contact_requests' => false]
         );
         $setting->share_enabled = $request->boolean('share_enabled');
         $setting->shared_branch_ids = $branchIds;
         $setting->shared_categories = $validated['shared_categories'] ?? [];
         $setting->show_price = $request->boolean('show_price');
+        $setting->allow_contact_requests = $request->boolean('allow_contact_requests');
         $setting->save();
 
         $this->cacheService->rebuildForCompany($company);

@@ -5,7 +5,7 @@
 @endphp
 
 {{-- 0. Photo --}}
-<div class="glm-card-static p-6">
+<div id="section-photo" class="glm-card-static p-6">
     <h2 class="text-lg font-semibold text-white mb-4">Photo du véhicule</h2>
     <div class="flex flex-wrap items-start gap-6">
         @if ($v && $v->image_path)
@@ -109,7 +109,7 @@
 </div>
 
 {{-- 2. Pricing --}}
-<div class="glm-card-static p-6">
+<div id="section-pricing" class="glm-card-static p-6">
     <h2 class="text-lg font-semibold text-white mb-4">Tarification</h2>
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div>
@@ -136,7 +136,7 @@
     <h2 class="text-lg font-semibold text-white mb-4">Conformité (Maroc)</h2>
 
     <div class="space-y-6">
-        <div class="border-b border-white/10 pb-6">
+        <div id="section-insurance" class="border-b border-white/10 pb-6">
             <h3 class="text-base font-medium text-slate-200 mb-3">Assurance</h3>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div><label for="insurance_company" class="mb-1 block text-xs font-medium text-slate-500">Compagnie</label><input type="text" id="insurance_company" name="insurance_company" value="{{ $val('insurance_company') }}" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white"></div>
@@ -150,8 +150,8 @@
             </div>
         </div>
 
-        <div class="border-b border-white/10 pb-6">
-            <h3 class="text-base font-medium text-slate-200 mb-3">Vignette (Dariba)</h3>
+        <div id="section-vignette" class="border-b border-white/10 pb-6">
+            <h3 class="text-base font-medium text-slate-200 mb-3">Vignette</h3>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div><label for="vignette_year" class="mb-1 block text-xs font-medium text-slate-500">Année</label><input type="number" id="vignette_year" name="vignette_year" value="{{ $val('vignette_year') }}" min="2000" max="2100" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white"></div>
                 <div><label for="vignette_amount" class="mb-1 block text-xs font-medium text-slate-500">Montant (MAD)</label><input type="number" id="vignette_amount" name="vignette_amount" value="{{ $val('vignette_amount') }}" min="0" step="0.01" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white"></div>
@@ -161,7 +161,7 @@
             </div>
         </div>
 
-        <div>
+        <div id="section-visite">
             <h3 class="text-base font-medium text-slate-200 mb-3">Visite technique</h3>
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div><label for="visite_last_date" class="mb-1 block text-xs font-medium text-slate-500">Dernière date</label><input type="date" id="visite_last_date" name="visite_last_date" value="{{ $v && $v->visite_last_date ? $v->visite_last_date->format('Y-m-d') : old('visite_last_date') }}" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white"></div>
@@ -174,7 +174,7 @@
 </div>
 
 {{-- 4. Financing --}}
-<div class="glm-card-static p-6" x-data="{ isFinanced: {{ $val('is_financed') ? 'true' : 'false' }} }">
+<div id="section-financing" class="glm-card-static p-6" x-data="{ isFinanced: {{ $val('is_financed') ? 'true' : 'false' }} }">
     <h2 class="text-lg font-semibold text-white mb-4">Financement</h2>
     <label class="inline-flex items-center gap-2 text-sm text-slate-300 mb-4">
         <input type="checkbox" name="is_financed" value="1" x-model="isFinanced" class="rounded border-white/20 bg-white/5 text-[#2563EB]">

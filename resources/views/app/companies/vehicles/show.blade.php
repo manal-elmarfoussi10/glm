@@ -55,6 +55,10 @@
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                         Modifier
                     </a>
+                    <a href="{{ route('app.companies.vehicles.duplicate', [$company, $vehicle]) }}" class="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20 transition no-underline" title="Créer une copie avec une autre plaque">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h2m0 8v2m0 8h2a2 2 0 002-2v-2m0-8V6a2 2 0 012-2h2m-8 2h10" /></svg>
+                        Dupliquer
+                    </a>
                     <a href="{{ route('app.companies.reservations.create', $company) }}?vehicle_id={{ $vehicle->id }}" class="inline-flex items-center gap-2 rounded-xl bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1d4ed8] transition no-underline">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                         Nouvelle réservation
@@ -72,6 +76,36 @@
         </div>
     </div>
 
+    @if ($vehicle->isIncomplete())
+        @php $checklist = $vehicle->completionChecklist(); $done = $vehicle->completionCount(); $total = count($checklist); @endphp
+        <div class="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6">
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                <h2 class="text-lg font-semibold text-white">Complétez ce véhicule</h2>
+                <p class="text-sm text-slate-300">{{ $done }} / {{ $total }} sections complétées</p>
+            </div>
+            <div class="h-2 w-full rounded-full bg-white/10 overflow-hidden mb-4">
+                <div class="h-full rounded-full bg-amber-500/60 transition-all duration-300" style="width: {{ $total > 0 ? round($done / $total * 100) : 0 }}%"></div>
+            </div>
+            <ul class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach ($checklist as $item)
+                    <li>
+                        @if ($item['done'])
+                            <span class="inline-flex items-center gap-2 text-sm text-slate-400">
+                                <svg class="h-4 w-4 shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                {{ $item['label'] }}
+                            </span>
+                        @else
+                            <a href="{{ route('app.companies.vehicles.edit', [$company, $vehicle]) }}#{{ $item['anchor'] }}" class="inline-flex items-center gap-2 text-sm text-amber-400 hover:text-amber-300 no-underline">
+                                <svg class="h-4 w-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                                {{ $item['label'] }}
+                            </a>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     {{-- Compliance cards with progress bars --}}
     <div class="grid gap-4 sm:grid-cols-3">
         @php
@@ -85,7 +119,7 @@
                     'icon' => 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
                 ],
                 'vignette' => [
-                    'label' => 'Vignette (Dariba)',
+                    'label' => 'Vignette',
                     'status' => $vig,
                     'date' => $vehicle->vignette_year ? 'Fin ' . $vehicle->vignette_year : null,
                     'days_remaining' => $vignetteDaysRemaining,

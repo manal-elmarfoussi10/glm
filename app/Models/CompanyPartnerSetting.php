@@ -15,6 +15,7 @@ class CompanyPartnerSetting extends Model
         'shared_branch_ids',
         'shared_categories',
         'show_price',
+        'allow_contact_requests',
     ];
 
     protected $casts = [
@@ -22,6 +23,7 @@ class CompanyPartnerSetting extends Model
         'shared_branch_ids' => 'array',
         'shared_categories' => 'array',
         'show_price' => 'boolean',
+        'allow_contact_requests' => 'boolean',
     ];
 
     public function company(): BelongsTo

@@ -87,6 +87,13 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/', fn () => redirect()->route('app.dashboard'));
 
+    // First-login onboarding wizard (company_admin / agent)
+    Route::get('/onboarding', [\App\Http\Controllers\App\OnboardingController::class, 'show'])->name('onboarding.show');
+    Route::post('/onboarding/step/1', [\App\Http\Controllers\App\OnboardingController::class, 'storeStep1'])->name('onboarding.store.step1');
+    Route::post('/onboarding/step/2', [\App\Http\Controllers\App\OnboardingController::class, 'storeStep2'])->name('onboarding.store.step2');
+    Route::post('/onboarding/step/3', [\App\Http\Controllers\App\OnboardingController::class, 'storeStep3'])->name('onboarding.store.step3');
+    Route::post('/onboarding/step/4', [\App\Http\Controllers\App\OnboardingController::class, 'storeStep4'])->name('onboarding.store.step4');
+
     Route::get('/test-mail', function () {
         $to = config('mail.test_to') ?: config('mail.from.address');
         if (! $to) {
@@ -166,6 +173,8 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
         Route::get('/companies/{company}/vehicles/{vehicle}/edit', [CompanyVehicleController::class, 'edit'])->name('companies.vehicles.edit');
         Route::put('/companies/{company}/vehicles/{vehicle}', [CompanyVehicleController::class, 'update'])->name('companies.vehicles.update');
         Route::delete('/companies/{company}/vehicles/{vehicle}', [CompanyVehicleController::class, 'destroy'])->name('companies.vehicles.destroy');
+        Route::get('/companies/{company}/vehicles/{vehicle}/duplicate', [CompanyVehicleController::class, 'duplicate'])->name('companies.vehicles.duplicate');
+        Route::post('/companies/{company}/vehicles/{vehicle}/duplicate', [CompanyVehicleController::class, 'storeDuplicate'])->name('companies.vehicles.store-duplicate');
 
         // Customers (Clients)
         Route::get('/companies/{company}/customers', [CompanyCustomerController::class, 'index'])->name('companies.customers.index');
@@ -226,6 +235,11 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
     Route::patch('/profile', [UserProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/password', [UserProfileController::class, 'updatePassword'])->name('profile.password');
     Route::get('/settings', [UserProfileController::class, 'settings'])->name('profile.settings');
+
+    // Notifications (in-app)
+    Route::get('/notifications', [\App\Http\Controllers\App\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\App\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\App\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 
     // Reports & Analytics: company_admin only (agents have limited operational access, no reports)
     Route::middleware(['company_operational', 'company_admin_only'])->group(function () {
@@ -369,7 +383,12 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
         return redirect()->route('app.dashboard')->with('info', 'Sélectionnez une entreprise.');
     })->name('upgrade.redirect');
 
-// Support & platform admin – super_admin + support
+// Support page for company users (admin / agent) – contact support
+    Route::get('/support', function () {
+        return view('app.support.index', ['title' => 'Support']);
+    })->name('support.index');
+
+    // Support & platform admin – super_admin + support
         Route::middleware('platform_staff')->group(function () {
             Route::get('/support-search', [SupportSearchController::class, 'index'])->name('search.index');
             Route::get('/subscriptions', [SupportSubscriptionController::class, 'index'])->name('subscriptions.index');
@@ -441,3 +460,43 @@ Route::middleware(['auth', 'web'])->prefix('app')->name('app.')->group(function 
         Route::post('/companies/{company}/subscription/extend-trial', [CompanySubscriptionController::class, 'extendTrial'])->name('companies.subscription.extend-trial');
     });
 });
+
+// Dev-only: email previews (local environment)
+if (app()->environment('local')) {
+    Route::get('/dev/mail-preview/{type}', function (string $type) {
+        $types = ['welcome', 'reset-password', 'ticket-created', 'document-expiring'];
+        if (! in_array($type, $types, true)) {
+            abort(404, 'Preview type must be: ' . implode(', ', $types));
+        }
+        $user = new \App\Models\User(['name' => 'Jean Dupont', 'email' => 'jean@example.com']);
+        $baseUrl = config('app.url');
+        if ($type === 'welcome') {
+            $mailable = new \App\Mail\WelcomeMail($user, $baseUrl . '/app');
+            return $mailable->render();
+        }
+        if ($type === 'reset-password') {
+            $mailable = new \App\Mail\ResetPasswordMail('Jean Dupont', $baseUrl . '/admin/reset-password?token=abc123&email=jean@example.com', 60);
+            return $mailable->render();
+        }
+        if ($type === 'ticket-created') {
+            $ticket = new \App\Models\Ticket(['subject' => 'Problème de connexion', 'company_id' => 1]);
+            $ticket->id = 42;
+            $ticket->setRelation('company', new \App\Models\Company(['name' => 'Location Auto SARL']));
+            $mailable = new \App\Mail\TicketCreatedMail($ticket, 'Support GLM', $baseUrl . '/app/inbox/42');
+            return $mailable->render();
+        }
+        if ($type === 'document-expiring') {
+            $mailable = new \App\Mail\DocumentExpiringMail(
+                'Jean Dupont',
+                'Assurance',
+                '12345-A-1',
+                'Renault Clio (2022)',
+                now()->addDays(15)->format('d/m/Y'),
+                15,
+                $baseUrl . '/app/companies/1/vehicles/1'
+            );
+            return $mailable->render();
+        }
+        abort(404);
+    })->name('dev.mail-preview');
+}

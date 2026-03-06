@@ -13,7 +13,7 @@ Nouvelle réservation – {{ $company->name }}
         'year' => $v->year,
         'daily_price' => (float) ($v->daily_price ?? 0),
         'image_url' => $v->image_url,
-        'branch_name' => $v->branch->name ?? '–',
+        'branch_name' => $v->branch?->name ?? '–',
         'fuel' => $v->fuel ?? '–',
         'transmission' => $v->transmission ?? '–',
         'status' => $v->status ?? 'available',
@@ -101,8 +101,9 @@ Nouvelle réservation – {{ $company->name }}
                 class="glm-card-static p-6 rounded-xl">
                 <h2 class="text-lg font-semibold text-white mb-2">Choisir le véhicule</h2>
                 <p class="text-sm text-slate-400 mb-4">Sélectionnez un véhicule disponible pour la période choisie.</p>
+                <p x-show="step === 2 && (!vehicles || vehicles.length === 0)" x-cloak class="text-sm text-amber-400 mb-4">Aucun véhicule à afficher. Rechargez la page (F5) ou vérifiez que des véhicules existent pour cette entreprise.</p>
                 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" id="vehicle-cards-container">
-                    <template x-for="v in vehicles" :key="v.id">
+                    <template x-for="(v, index) in (vehicles || [])" :key="v.id">
                         <div @click="selectVehicle(v)"
                             class="rounded-xl border-2 transition cursor-pointer overflow-hidden"
                             :class="vehicleAvailable(v.id) ? (vehicleId == v.id ? 'border-[#2563EB] bg-[#2563EB]/10' : 'border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/5') : 'border-red-500/30 bg-red-500/5 cursor-not-allowed opacity-75'"
@@ -297,13 +298,14 @@ Nouvelle réservation – {{ $company->name }}
 
 <script>
 function reservationWizard() {
-    const vehicles = @json($vehiclesJson);
+    const vehiclesData = @json($vehiclesJson);
     const availabilityUrl = @json($availabilityUrlTemplate);
     const customerLookupUrl = @json($customerLookupUrl);
     const customerStoreUrl = @json($customerStoreUrl);
     const customerStoreCsrf = @json($customerStoreCsrf);
 
     return {
+        vehicles: Array.isArray(vehiclesData) ? vehiclesData : [],
         step: 1,
         vehicleId: '',
         customerId: '',
@@ -331,7 +333,7 @@ function reservationWizard() {
 
         get selectedVehicle() {
             if (!this.vehicleId) return null;
-            return vehicles.find(x => x.id == this.vehicleId) || null;
+            return (this.vehicles || []).find(x => x.id == this.vehicleId) || null;
         },
         get vehicleLabel() {
             const v = this.selectedVehicle;
@@ -401,7 +403,7 @@ function reservationWizard() {
             this.recalcPrice();
         },
         fetchAllAvailabilities() {
-            vehicles.forEach(v => {
+            (this.vehicles || []).forEach(v => {
                 fetch(availabilityUrl.replace('VEHICLE_ID', v.id))
                     .then(r => r.json())
                     .then(data => {
@@ -425,7 +427,7 @@ function reservationWizard() {
         },
         validateStep2AndGoToClient() {
             if (!this.vehicleId) { alert('Veuillez sélectionner un véhicule.'); return; }
-            const v = vehicles.find(x => x.id == this.vehicleId);
+            const v = (this.vehicles || []).find(x => x.id == this.vehicleId);
             if (v && !this.vehicleAvailable(v.id)) {
                 if (!confirm('Ce véhicule n\'est pas disponible sur cette période. Continuer quand même ?')) return;
             }

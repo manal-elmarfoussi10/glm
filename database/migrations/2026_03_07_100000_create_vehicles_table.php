@@ -41,7 +41,7 @@ return new class extends Migration
             $table->string('insurance_document_path')->nullable();
             $table->boolean('insurance_reminder')->default(true);
 
-            // Vignette (Dariba) – Morocco
+            // Vignette – Morocco
             $table->unsignedSmallInteger('vignette_year')->nullable();
             $table->decimal('vignette_amount', 12, 2)->nullable();
             $table->date('vignette_paid_date')->nullable();

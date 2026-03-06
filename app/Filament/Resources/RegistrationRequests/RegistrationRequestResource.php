@@ -247,6 +247,8 @@ class RegistrationRequestResource extends Resource
                                     'company_id' => $company->id,
                                     'custom_pricing' => $data['custom_pricing'] ?? null,
                                 ]);
+
+                                $record->notify(new \App\Notifications\CompanyApprovedNotification($company->name, url('/app')));
                             });
 
                             \Filament\Notifications\Notification::make()

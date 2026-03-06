@@ -47,9 +47,7 @@ Ajouter un utilisateur
                 <label for="role" class="mb-1.5 block text-sm font-medium text-slate-300">Rôle <span class="text-red-400">*</span></label>
                 <select id="role" name="role" required class="w-full rounded-xl border-0 bg-white/5 px-4 py-2.5 text-sm text-white focus:ring-2 focus:ring-[#2563EB]/50">
                     <option value="company_admin" {{ old('role') === 'company_admin' ? 'selected' : '' }}>Administrateur</option>
-                    <option value="manager" {{ old('role') === 'manager' ? 'selected' : '' }}>Manager</option>
                     <option value="staff" {{ old('role', 'staff') === 'staff' ? 'selected' : '' }}>Staff</option>
-                    <option value="accountant" {{ old('role') === 'accountant' ? 'selected' : '' }}>Comptable</option>
                 </select>
                 @error('role')<p class="mt-1 text-xs text-red-400">{{ $message }}</p>@enderror
             </div>

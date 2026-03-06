@@ -18,6 +18,7 @@
     $isSubscriptions = request()->routeIs('app.subscriptions.*');
     $isUpgradeRequests = request()->routeIs('app.admin.upgrade-requests.*');
     $isInbox = request()->routeIs('app.inbox.*');
+    $isSupportPage = request()->routeIs('app.support.*');
     $isJournal = request()->routeIs('app.journal.*') || request()->routeIs('app.companies.activity.index') || request()->routeIs('app.activity.redirect');
     $isCustomers = request()->routeIs('app.companies.customers.*') || request()->routeIs('app.customers.redirect');
     $isProfitability = request()->routeIs('app.companies.fleet.profitability.*') || request()->routeIs('app.fleet.profitability.redirect');
@@ -325,6 +326,17 @@
                     </span>
                     <span class="truncate">Journal d'activité</span>
                 </a>
+
+                <a href="{{ route('app.support.index') }}"
+                   class="{{ $baseItem }} {{ $isSupportPage ? $activeItem.' '.$activeLeftBar : $inactiveItem }}">
+                    <span class="{{ $iconWrap }} {{ $isSupportPage ? 'bg-white/10 border-white/15' : '' }}">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                    </span>
+                    <span class="truncate">Support</span>
+                </a>
 @endif
 
         {{-- PLATFORM SIDE --}}
@@ -392,10 +404,10 @@
                     <span class="{{ $iconWrap }}">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                  d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
                     </span>
-                    <span class="truncate">Inbox / Messages</span>
+                    <span class="truncate">Support</span>
                 </a>
 
                 <a href="{{ route('app.journal.index') }}"

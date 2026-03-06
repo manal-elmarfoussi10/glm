@@ -90,6 +90,16 @@ class TicketController extends Controller
 
         AuditLog::log('ticket.created', Ticket::class, (int) $ticket->id, null, ['subject' => $ticket->subject]);
 
+        $ticket->load('company');
+        $ticketUrl = route('app.inbox.show', $ticket);
+        if ($ticket->assigned_to) {
+            User::find($ticket->assigned_to)?->notify(new \App\Notifications\TicketCreatedNotification($ticket, $ticketUrl));
+        } else {
+            User::whereIn('role', ['super_admin', 'support'])->get()->each(function ($u) use ($ticket, $ticketUrl) {
+                $u->notify(new \App\Notifications\TicketCreatedNotification($ticket, $ticketUrl));
+            });
+        }
+
         return redirect()->route('app.inbox.show', $ticket)->with('success', 'Ticket créé.');
     }
 
@@ -140,6 +150,26 @@ class TicketController extends Controller
 
         if ($ticket->status === 'new') {
             $ticket->update(['status' => 'open']);
+        }
+
+        $isInternal = (bool) ($validated['is_internal'] ?? false);
+        if (! $isInternal) {
+            $ticket->load(['company', 'user']);
+            $ticketUrl = route('app.inbox.show', $ticket);
+            $replierName = auth()->user()->name ?? auth()->user()->email;
+            if ($ticket->user_id && $ticket->user_id !== auth()->id()) {
+                $ticket->user->notify(new \App\Notifications\TicketReplyNotification($ticket, $replierName, $ticketUrl));
+            }
+            if ($ticket->company_id) {
+                $ticket->company->users()->where('role', 'company_admin')->get()->each(function ($u) use ($ticket, $ticketUrl, $replierName) {
+                    if ($u->id !== auth()->id()) {
+                        $u->notify(new \App\Notifications\TicketReplyNotification($ticket, $replierName, $ticketUrl));
+                    }
+                });
+            }
+            if ($ticket->assigned_to && $ticket->assigned_to !== auth()->id()) {
+                User::find($ticket->assigned_to)?->notify(new \App\Notifications\TicketReplyNotification($ticket, $replierName, $ticketUrl));
+            }
         }
 
         return back()->with('success', 'Réponse enregistrée.');

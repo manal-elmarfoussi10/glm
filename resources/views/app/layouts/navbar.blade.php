@@ -17,6 +17,8 @@
 
     $profileUrl  = route('app.profile.show');
     $settingsUrl = route('app.profile.settings');
+    $notificationUnreadCount = auth()->user()->unreadNotifications()->count();
+    $notificationsUrl = route('app.notifications.index');
 @endphp
 
 <header class="sticky top-0 z-30 px-4 sm:px-6 pt-4" x-data="{ 
@@ -155,6 +157,23 @@
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
             </span>
         </button>
+
+        {{-- Notifications bell --}}
+        <a
+            href="{{ $notificationsUrl }}"
+            class="relative inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 border border-white/20 text-white/80 hover:bg-white/25 hover:text-white transition"
+            aria-label="Notifications"
+            title="Notifications"
+        >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            @if($notificationUnreadCount > 0)
+                <span class="absolute -top-1 -right-1 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-amber-500 px-1 text-[11px] font-bold text-white shadow-sm">
+                    {{ $notificationUnreadCount > 99 ? '99+' : $notificationUnreadCount }}
+                </span>
+            @endif
+        </a>
 
         {{-- Alerts icon --}}
         <a

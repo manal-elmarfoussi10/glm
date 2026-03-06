@@ -50,7 +50,7 @@ class RegisterController extends Controller
         $operatingCities = $validated['operating_cities'] ?? '';
         $citiesArray = array_values(array_filter(array_map('trim', explode(',', $operatingCities))));
 
-        User::create([
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
@@ -65,6 +65,10 @@ class RegisterController extends Controller
             'operating_cities' => $citiesArray,
             'registration_message' => $validated['registration_message'] ?? null,
         ]);
+
+        User::where('role', 'super_admin')->get()->each(function ($admin) use ($user) {
+            $admin->notify(new \App\Notifications\NewRegistrationNotification($user));
+        });
 
         return redirect()
             ->route('auth.pending-approval')

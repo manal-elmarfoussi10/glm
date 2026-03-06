@@ -86,7 +86,7 @@ class CompanyReservationController extends Controller
         ]);
     }
 
-    public function create(Company $company): View
+    public function create(Company $company): View|RedirectResponse
     {
         $vehicles = $company->vehicles()->with('branch')->orderBy('plate')->get();
         $customers = $company->customers()->orderBy('name')->get(['id', 'name', 'cin', 'phone', 'email', 'is_flagged']);
@@ -195,6 +195,12 @@ class CompanyReservationController extends Controller
         if ($reservation->payments()->exists()) {
             $reservation->refreshPaymentStatus();
         }
+
+        $reservation->load(['customer', 'vehicle']);
+        $reservationUrl = route('app.companies.reservations.show', [$company, $reservation]);
+        $company->users()->where('role', 'company_admin')->get()->each(function ($u) use ($reservation, $reservationUrl) {
+            $u->notify(new \App\Notifications\ReservationCreatedNotification($reservation, $reservationUrl));
+        });
 
         $message = $reservation->status === Reservation::STATUS_IN_PROGRESS ? 'Réservation confirmée et location démarrée.'
             : ($reservation->status === Reservation::STATUS_CONFIRMED ? 'Réservation confirmée.' : 'Brouillon enregistré.');
@@ -424,6 +430,11 @@ class CompanyReservationController extends Controller
         $contract->generated_at = now();
         $contract->save();
         $reservation->update(['contract_status' => Reservation::CONTRACT_STATUS_GENERATED]);
+        $reservation->load(['customer', 'vehicle']);
+        $reservationUrl = route('app.companies.reservations.show', [$company, $reservation]);
+        $company->users()->where('role', 'company_admin')->get()->each(function ($u) use ($reservation, $reservationUrl) {
+            $u->notify(new \App\Notifications\ContractGeneratedNotification($reservation, $reservationUrl));
+        });
         return back()->with('success', 'Contrat généré. Vous pouvez l’imprimer ou l’exporter en PDF.');
     }
 
@@ -524,6 +535,12 @@ class CompanyReservationController extends Controller
             'contract_status' => Reservation::CONTRACT_STATUS_SIGNED,
         ]);
         $reservation->reservationContract?->update(['status' => ReservationContract::STATUS_SIGNED]);
+
+        $reservation->load(['customer', 'vehicle']);
+        $reservationUrl = route('app.companies.reservations.show', [$company, $reservation]);
+        $company->users()->where('role', 'company_admin')->get()->each(function ($u) use ($reservation, $reservationUrl) {
+            $u->notify(new \App\Notifications\ContractSignedNotification($reservation, $reservationUrl));
+        });
 
         return back()->with('success', 'Contrat signé enregistré.');
     }

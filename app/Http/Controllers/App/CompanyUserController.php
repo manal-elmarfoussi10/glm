@@ -43,14 +43,15 @@ class CompanyUserController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
             'phone' => 'nullable|string|max:32',
             'password' => ['nullable', 'string', 'min:8', Password::default()],
-            'role' => 'required|string|in:company_admin,manager,staff,accountant',
+            'role' => 'required|string|in:company_admin,staff',
             'status' => 'required|string|in:active,suspended,invited',
         ]);
 
         $validated['company_id'] = $company->id;
         $validated['password'] = Hash::make($validated['password'] ?? str()->random(12));
 
-        User::create($validated);
+        $newUser = User::create($validated);
+        $newUser->notify(new \App\Notifications\NewUserCreatedNotification(url('/app')));
 
         return redirect()
             ->route('app.companies.users.index', $company)

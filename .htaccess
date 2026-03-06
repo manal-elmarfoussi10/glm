@@ -4,6 +4,10 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    # Serve Vite build assets from public/build/ so CSS/JS load when doc root is project root
+    RewriteCond %{REQUEST_URI} ^/build/
+    RewriteRule ^build/(.*)$ public/build/$1 [L]
+    # Send all other requests to Laravel
     RewriteCond %{REQUEST_URI} !^/public/
     RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>

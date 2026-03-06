@@ -71,6 +71,15 @@ Partage disponibilité partenaires – {{ $company->name }}
             <p class="mt-2 text-sm text-slate-400">Les partenaires qui recherchent verront une fourchette de prix (min–max) pour la catégorie.</p>
         </div>
 
+        <div class="rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl p-6 shadow-[0_20px_50px_rgba(0,0,0,0.25)]">
+            <label class="flex items-center gap-3 cursor-pointer">
+                <input type="hidden" name="allow_contact_requests" value="0">
+                <input type="checkbox" name="allow_contact_requests" value="1" {{ old('allow_contact_requests', $setting->allow_contact_requests ?? false) ? 'checked' : '' }} class="rounded border-white/20 bg-white/5 text-[#2563EB]">
+                <span class="font-semibold text-white">Autoriser d'autres agences à me contacter</span>
+            </label>
+            <p class="mt-2 text-sm text-slate-400">Les partenaires pourront vous envoyer une demande de contact depuis la recherche.</p>
+        </div>
+
         <div class="flex gap-3">
             <button type="submit" class="glm-btn-primary">Enregistrer</button>
             <a href="{{ route('app.companies.show', $company) }}" class="glm-btn-secondary no-underline">Annuler</a>

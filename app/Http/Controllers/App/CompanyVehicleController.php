@@ -56,11 +56,14 @@ class CompanyVehicleController extends Controller
             abort(403, 'Créez d\'abord au moins une agence (branche).');
         }
 
+        $full = $request->boolean('full');
+
         return view('app.companies.vehicles.create', [
             'title' => 'Nouveau véhicule – ' . $company->name,
             'company' => $company,
             'branches' => $branches,
             'preselected_branch_id' => $request->input('branch_id'),
+            'full' => $full,
         ]);
     }
 
@@ -70,6 +73,11 @@ class CompanyVehicleController extends Controller
             return redirect()->to(route('app.companies.upgrade', $company) . '?limit=' . PlanGateService::LIMIT_VEHICLES)
                 ->with('error', 'Limite de véhicules atteinte pour votre plan. Passez à un plan supérieur.');
         }
+
+        if ($request->boolean('quick_create')) {
+            return $this->storeQuick($request, $company);
+        }
+
         $validated = $this->validateVehicle($request);
         $branch = $company->branches()->findOrFail($validated['branch_id']);
         $validated['branch_id'] = $branch->id;
@@ -85,6 +93,34 @@ class CompanyVehicleController extends Controller
         return redirect()
             ->route('app.companies.vehicles.index', $company)
             ->with('success', 'Véhicule créé.');
+    }
+
+    private function storeQuick(Request $request, Company $company): RedirectResponse
+    {
+        $validated = $request->validate([
+            'plate' => 'required|string|max:32',
+            'brand' => 'required|string|max:100',
+            'model' => 'required|string|max:100',
+            'branch_id' => 'required|exists:branches,id',
+            'year' => 'nullable|integer|min:1900|max:2100',
+            'partner_category' => 'nullable|string|in:' . implode(',', array_keys(Vehicle::PARTNER_CATEGORIES)),
+            'daily_price' => 'nullable|numeric|min:0',
+        ]);
+        $branch = $company->branches()->findOrFail($validated['branch_id']);
+        $vehicle = Vehicle::create([
+            'branch_id' => $branch->id,
+            'plate' => $validated['plate'],
+            'brand' => $validated['brand'],
+            'model' => $validated['model'],
+            'year' => $validated['year'] ?? null,
+            'partner_category' => $validated['partner_category'] ?? null,
+            'daily_price' => isset($validated['daily_price']) && $validated['daily_price'] !== '' ? $validated['daily_price'] : null,
+            'status' => Vehicle::STATUS_AVAILABLE,
+        ]);
+
+        return redirect()
+            ->route('app.companies.vehicles.show', [$company, $vehicle])
+            ->with('success', 'Véhicule créé. Complétez les informations ci-dessous si besoin.');
     }
 
     public function show(Company $company, Vehicle $vehicle, AlertService $alertService): View
@@ -183,6 +219,52 @@ class CompanyVehicleController extends Controller
             ->with('success', 'Véhicule supprimé.');
     }
 
+    public function duplicate(Company $company, Vehicle $vehicle): View
+    {
+        $this->ensureVehicleBelongsToCompany($vehicle, $company);
+
+        return view('app.companies.vehicles.duplicate', [
+            'title' => 'Dupliquer ' . $vehicle->plate . ' – ' . $company->name,
+            'company' => $company,
+            'vehicle' => $vehicle,
+        ]);
+    }
+
+    public function storeDuplicate(Request $request, Company $company, Vehicle $vehicle, PlanGateService $planGate): RedirectResponse
+    {
+        $this->ensureVehicleBelongsToCompany($vehicle, $company);
+
+        if ($planGate->isLimitReached($company, PlanGateService::LIMIT_VEHICLES)) {
+            return redirect()->to(route('app.companies.upgrade', $company) . '?limit=' . PlanGateService::LIMIT_VEHICLES)
+                ->with('error', 'Limite de véhicules atteinte pour votre plan. Passez à un plan supérieur.');
+        }
+
+        $request->validate([
+            'plate' => [
+                'required',
+                'string',
+                'max:32',
+                \Illuminate\Validation\Rule::unique('vehicles', 'plate')->where(fn ($q) => $q->whereIn('branch_id', $company->branches()->pluck('id'))),
+            ],
+        ]);
+
+        $filePathFields = [
+            'image_path', 'insurance_document_path', 'vignette_receipt_path',
+            'visite_document_path', 'financing_contract_path',
+        ];
+        $attrs = $vehicle->only($vehicle->getFillable());
+        $attrs['plate'] = $request->plate;
+        foreach ($filePathFields as $field) {
+            $attrs[$field] = null;
+        }
+
+        $newVehicle = Vehicle::create($attrs);
+
+        return redirect()
+            ->route('app.companies.vehicles.show', [$company, $newVehicle])
+            ->with('success', 'Véhicule dupliqué. Seule la plaque a été modifiée.');
+    }
+
     private function validateVehicle(Request $request, ?Vehicle $vehicle = null): array
     {
         $rules = [
@@ -191,7 +273,7 @@ class CompanyVehicleController extends Controller
             'plate' => 'required|string|max:32',
             'brand' => 'required|string|max:100',
             'model' => 'required|string|max:100',
-            'partner_category' => 'nullable|string|in:economy,sedan,suv',
+            'partner_category' => 'nullable|string|in:' . implode(',', array_keys(Vehicle::PARTNER_CATEGORIES)),
             'year' => 'nullable|integer|min:1900|max:2100',
             'vin' => 'nullable|string|max:50',
             'fuel' => 'nullable|string|max:32|in:essence,diesel,hybrid,electric',

@@ -14,6 +14,7 @@ class Company extends Model
         'city',
         'address',
         'status',
+        'onboarding_completed_at',
         'plan',
         'plan_id',
         'trial_ends_at',
@@ -27,7 +28,51 @@ class Company extends Model
         'trial_ends_at' => 'datetime',
         'subscription_started_at' => 'datetime',
         'next_billing_date' => 'datetime',
+        'onboarding_completed_at' => 'datetime',
     ];
+
+    /**
+     * Whether the company should see the onboarding wizard (no branch yet, no vehicle yet, or never completed).
+     */
+    public function needsOnboarding(): bool
+    {
+        if ($this->onboarding_completed_at) {
+            return false;
+        }
+        if ($this->branches()->count() === 0) {
+            return true;
+        }
+        if ($this->vehicles()->count() === 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checklist items still to do for setup (for dashboard card). Only when onboarding not completed.
+     */
+    public function onboardingChecklist(): array
+    {
+        $items = [];
+        if ($this->branches()->count() === 0) {
+            $items[] = ['key' => 'branch', 'label' => 'Créer votre première agence', 'route' => 'app.companies.branches.create', 'done' => false];
+        } else {
+            $items[] = ['key' => 'branch', 'label' => 'Première agence créée', 'route' => null, 'done' => true];
+        }
+        if ($this->vehicles()->count() === 0) {
+            $items[] = ['key' => 'vehicle', 'label' => 'Ajouter votre premier véhicule', 'route' => 'app.companies.vehicles.create', 'done' => false];
+        } else {
+            $items[] = ['key' => 'vehicle', 'label' => 'Premier véhicule ajouté', 'route' => null, 'done' => true];
+        }
+        $partnerSetting = $this->partnerSetting;
+        $partnerDone = $partnerSetting && $partnerSetting->share_enabled;
+        if (! $partnerDone) {
+            $items[] = ['key' => 'partner', 'label' => 'Rejoindre le réseau partenaires GLM', 'route' => 'app.companies.partner-settings.edit', 'done' => false];
+        } else {
+            $items[] = ['key' => 'partner', 'label' => 'Réseau partenaires activé', 'route' => null, 'done' => true];
+        }
+        return $items;
+    }
 
     public function planRelation()
     {

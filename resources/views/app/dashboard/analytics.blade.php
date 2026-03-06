@@ -24,6 +24,8 @@
     $todoItems = $todoItems ?? [];
     $hasAiAccess = $hasAiAccess ?? false;
     $lastActivityAt = $lastActivityAt ?? null;
+    $onboardingChecklist = $onboardingChecklist ?? [];
+    $showOnboardingChecklist = $showOnboardingChecklist ?? false;
 @endphp
 
 @section('content')
@@ -64,6 +66,33 @@
             @endif
         </div>
     </header>
+
+    {{-- Setup checklist (when onboarding done but something still missing) --}}
+    @if ($company && $showOnboardingChecklist && !empty($onboardingChecklist))
+    <div class="glm-card-static rounded-2xl border border-[#2563EB]/20 bg-[#2563EB]/5 p-6">
+        <h2 class="text-base font-semibold text-white mb-2">Configuration initiale</h2>
+        <p class="text-sm text-slate-400 mb-4">Complétez ces étapes pour tirer le meilleur parti de GLM.</p>
+        <ul class="space-y-2">
+            @foreach ($onboardingChecklist as $item)
+                <li class="flex items-center gap-3">
+                    @if ($item['done'])
+                        <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                        </span>
+                        <span class="text-slate-400">{{ $item['label'] }}</span>
+                    @else
+                        <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-slate-400">•</span>
+                        @if ($item['route'])
+                            <a href="{{ route($item['route'], $company) }}" class="text-[#93C5FD] hover:text-white font-medium no-underline">{{ $item['label'] }}</a>
+                        @else
+                            <span class="text-slate-300">{{ $item['label'] }}</span>
+                        @endif
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
     {{-- 2) KPI Row --}}
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">

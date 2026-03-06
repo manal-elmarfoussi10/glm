@@ -39,6 +39,11 @@
                             {{ session('error') }}
                         </div>
                     @endif
+                    @if (session('info'))
+                        <div class="mb-6 glm-fade-in rounded-2xl px-4 py-3 text-sm border border-[#2563EB]/30 bg-[#2563EB]/10 text-[#93C5FD]" role="alert">
+                            {{ session('info') }}
+                        </div>
+                    @endif
                     @yield('content')
                 </div>
             </main>

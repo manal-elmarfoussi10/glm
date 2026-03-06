@@ -302,7 +302,7 @@ html:not(.dark) .glm-app-main .glm-btn-primary {
 .glm-tab-inactive { color: var(--glm-muted); }
 .glm-tab-inactive:hover { color: var(--glm-text); }
 
-/* Form inputs – theme-aware (use with rounded-xl px-4 py-2.5 text-sm etc.) */
+/* Form inputs – theme-aware, always visible border (use with rounded-xl px-4 py-2.5 text-sm etc.) */
 .glm-input,
 .glm-select {
     background: var(--surface-2);
@@ -317,6 +317,26 @@ html:not(.dark) .glm-app-main .glm-btn-primary {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+/* All form controls in app: ensure visible border so users see where to type (light theme fix) */
+.glm-app-main input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="image"]),
+.glm-app-main select,
+.glm-app-main textarea {
+    border-width: 1px;
+    border-style: solid;
+}
+/* Light theme: override faint white borders so inputs are clearly outlined */
+html:not(.dark) .glm-app-main input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="image"]),
+html:not(.dark) .glm-app-main select,
+html:not(.dark) .glm-app-main textarea {
+    border-color: var(--border) !important;
+    background-color: var(--surface-2);
+    color: var(--text);
+}
+html:not(.dark) .glm-app-main input::placeholder,
+html:not(.dark) .glm-app-main textarea::placeholder {
+    color: var(--muted);
 }
 
 /* Side drawer */

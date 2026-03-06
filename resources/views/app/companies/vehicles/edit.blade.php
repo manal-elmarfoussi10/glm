@@ -10,6 +10,7 @@ Modifier {{ $vehicle->plate }} – {{ $company->name }}
         <div>
             <a href="{{ route('app.companies.vehicles.show', [$company, $vehicle]) }}" class="text-sm font-medium text-slate-400 hover:text-white mb-2 inline-block no-underline">← {{ $vehicle->plate }}</a>
             <h1 class="text-2xl font-bold tracking-tight text-white">Modifier le véhicule</h1>
+            <p class="mt-1 text-sm text-slate-400">Formulaire complet · Photo, tarification, conformité, financement.</p>
         </div>
         <a href="{{ route('app.companies.vehicles.show', [$company, $vehicle]) }}" class="glm-btn-secondary no-underline">Voir la fiche</a>
     </header>

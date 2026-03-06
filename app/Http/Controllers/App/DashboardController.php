@@ -13,6 +13,7 @@ use App\Models\Vehicle;
 use App\Services\AlertService;
 use App\Services\PlanGateService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -22,7 +23,7 @@ class DashboardController extends Controller
         private PlanGateService $planGate
     ) {}
 
-    public function index(): View
+    public function index(): View|RedirectResponse
     {
         $user = auth()->user();
 
@@ -41,15 +42,21 @@ class DashboardController extends Controller
         return $this->companyDashboard($user);
     }
 
-    private function companyDashboard(User $user): View
+    private function companyDashboard(User $user): View|RedirectResponse
     {
         $company = $user->company_id ? Company::find($user->company_id) : null;
+        if ($company && $company->needsOnboarding()) {
+            return redirect()->route('app.onboarding.show');
+        }
         return $this->companyAnalyticsDashboard($company, false);
     }
 
-    private function agentDashboard(User $user): View
+    private function agentDashboard(User $user): View|RedirectResponse
     {
         $company = $user->company_id ? Company::find($user->company_id) : null;
+        if ($company && $company->needsOnboarding()) {
+            return redirect()->route('app.onboarding.show');
+        }
         return $this->companyAnalyticsDashboard($company, true);
     }
 
@@ -184,6 +191,9 @@ class DashboardController extends Controller
 
         $lastActivityAt = $company && $company->updated_at ? $company->updated_at->diffForHumans() : null;
 
+        $onboardingChecklist = $company && $company->onboarding_completed_at ? $company->onboardingChecklist() : [];
+        $showOnboardingChecklist = count(array_filter($onboardingChecklist, fn ($i) => ! $i['done'])) > 0;
+
         return view('app.dashboard.analytics', [
             'title' => 'Tableau de bord',
             'company' => $company,
@@ -205,6 +215,8 @@ class DashboardController extends Controller
             'todoItems' => $todoItems,
             'hasAiAccess' => $hasAiAccess,
             'lastActivityAt' => $lastActivityAt,
+            'onboardingChecklist' => $onboardingChecklist,
+            'showOnboardingChecklist' => $showOnboardingChecklist,
         ]);
     }
 

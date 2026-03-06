@@ -127,4 +127,10 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->role === 'support';
     }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $expireMinutes = (int) config('auth.passwords.users.expire', 60);
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token, $expireMinutes));
+    }
 }

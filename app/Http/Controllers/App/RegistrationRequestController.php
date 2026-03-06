@@ -114,6 +114,8 @@ class RegistrationRequestController extends Controller
                 'plan_id' => $plan->id,
                 'trial_ends_at' => $trialEndsAt?->toDateTimeString(),
             ]);
+
+            $user->notify(new \App\Notifications\CompanyApprovedNotification($company->name, url('/app')));
         });
 
         return redirect()
