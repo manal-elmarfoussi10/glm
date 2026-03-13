@@ -159,6 +159,15 @@
   box-sizing: border-box !important;
 }
 
+/* Override Filament’s 12px left padding on email wrapper (beats .fi-fo-text-input specificity) */
+.glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp.fi-fo-text-input,
+.glm-auth-card .fi-fo-field-wrp:has(input[type="text"]) .fi-input-wrp.fi-fo-text-input,
+.glm-auth-card .fi-input-wrp.fi-fo-text-input:has(input[type="email"]),
+.glm-auth-card .fi-input-wrp.fi-fo-text-input:has(input[type="text"]) {
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
 /* Email: content-ctn and input fill width, zero left/right so text starts at 4px from border */
 .glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp .fi-input-wrp-content-ctn,
 .glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp input,

@@ -47,7 +47,8 @@ class CustomLogin extends BaseLogin
             ->email()
             ->required()
             ->autocomplete('username')
-            ->autofocus();
+            ->autofocus()
+            ->prefix('');
     }
 
     protected function getPasswordFormComponent(): Component
