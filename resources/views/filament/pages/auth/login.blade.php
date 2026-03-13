@@ -10,8 +10,8 @@
     <div class="glm-auth-page-content space-y-10">
         @if ($hasLogo)
             <div class="flex flex-col items-center lg:hidden space-y-4 pb-2">
-                <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-20 w-20 object-contain" />
-           
+                <img src="{{ url('images/light-logo.png') }}" alt="GLM" class="h-20 w-20 object-contain" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');" />
+                <span class="hidden text-2xl font-bold text-white tracking-tight" style="font-family: 'Montserrat', sans-serif;">GLM</span>
             </div>
         @endif
 

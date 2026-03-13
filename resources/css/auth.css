@@ -143,7 +143,7 @@
   max-width: none !important;
 }
 
-/* Email & text: single box on wrapper, 12px left so caret starts near edge like password */
+/* Email & text: single box on wrapper, 8px horizontal so less space on left */
 .glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp,
 .glm-auth-card .fi-fo-field-wrp:has(input[type="text"]) .fi-input-wrp,
 .glm-auth-card .fi-grid-col:has(input[type="email"]) .fi-input-wrp,
@@ -151,7 +151,7 @@
   display: flex !important;
   align-items: center !important;
   height: 42px !important;
-  padding: 0 12px !important;
+  padding: 0 8px !important;
   background: rgba(255,255,255,0.06) !important;
   border: 1px solid rgba(255,255,255,0.12) !important;
   border-radius: 10px !important;
@@ -268,7 +268,7 @@
   text-align: left !important;
 }
 
-/* Email/text: no input padding – wrapper provides 12px (match password). Override generic padding so caret starts near left edge. */
+/* Email/text: no input padding – wrapper provides 8px. Override generic padding so caret starts near left edge. */
 .glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp input[type="email"],
 .glm-auth-card .fi-fo-field-wrp:has(input[type="text"]) .fi-input-wrp input[type="text"],
 .glm-auth-card .fi-grid-col:has(input[type="email"]) .fi-input-wrp input[type="email"],

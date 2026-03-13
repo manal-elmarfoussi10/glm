@@ -33,7 +33,8 @@
             </div>
             <div class="relative z-10 flex items-center gap-4 glm-fade-in">
                 <a href="{{ url('/admin') }}" class="flex items-center gap-4">
-                    <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" />
+                    <img src="{{ url('images/light-logo.png') }}" alt="GLM" class="h-20 w-20 lg:h-28 lg:w-28 object-contain flex-shrink-0" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');" />
+                    <span class="hidden text-2xl lg:text-3xl font-bold text-white tracking-tight" style="font-family: 'Montserrat', sans-serif;">GLM</span>
                 </a>
             </div>
             <div class="relative z-10 space-y-8 glm-slide-up">
@@ -48,8 +49,9 @@
             <div class="w-full max-w-3xl glm-fade-in">
                 <div class="glm-auth-card rounded-2xl p-8 sm:p-10 shadow-xl">
                     <div class="flex flex-col items-center lg:hidden mb-6">
-                        <a href="{{ url('/admin') }}">
-                            <img src="{{ app_asset('images/light-logo.png') }}" alt="GLM" class="h-16 w-auto object-contain" />
+                        <a href="{{ url('/admin') }}" class="flex items-center justify-center">
+                            <img src="{{ url('images/light-logo.png') }}" alt="GLM" class="h-16 w-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling?.classList.remove('hidden');" />
+                            <span class="hidden text-xl font-bold text-white tracking-tight" style="font-family: 'Montserrat', sans-serif;">GLM</span>
                         </a>
                     </div>
                     <header class="text-left space-y-1 mb-6">
