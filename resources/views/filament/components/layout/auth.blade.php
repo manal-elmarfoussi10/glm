@@ -22,23 +22,31 @@
         .glm-fade-in { animation: glm-fade-in 0.6s ease-out forwards; }
         .glm-slide-up { animation: glm-slide-up 0.7s ease-out 0.2s forwards; opacity: 0; }
 
-        /* ✅ Email input: no extra padding – wrapper provides 8px so text starts near left edge */
-        .glm-auth-card input[type="email"]{
+        /* ✅ Email input: zero padding on input so text starts at wrapper's 4px from edge */
+        .glm-auth-card input[type="email"],
+        .glm-auth-card input[type="text"]{
             padding-left: 0 !important;
             padding-right: 0 !important;
             text-indent: 0 !important;
-            background-position: 8px center !important; /* if browser adds icons */
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            background-position: 0 center !important;
         }
 
-        /* ✅ If Filament keeps adding "prefix space", force all auth inputs to match */
-        .glm-auth-card input[type="text"],
         .glm-auth-card input[type="password"]{
             text-indent: 0 !important;
         }
 
-        /* ✅ Optional: if Filament renders an empty prefix icon container, hide it */
-        .glm-auth-card .fi-input-wrp-prefix:empty{
+        /* ✅ Hide any Filament prefix/leading slot on email & text so no extra left space */
+        .glm-auth-card .fi-fo-field-wrp:has(input[type="email"]) .fi-input-wrp-prefix,
+        .glm-auth-card .fi-fo-field-wrp:has(input[type="text"]) .fi-input-wrp-prefix,
+        .glm-auth-card .fi-input-wrp [data-slot="input.prefix"]{
             display: none !important;
+            min-width: 0 !important;
+            width: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
         }
     </style>
 
